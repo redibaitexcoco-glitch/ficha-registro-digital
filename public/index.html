@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha de Registro - IES Red IBAI Connect</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>Ficha de Registro</h1>
+  <p>IES Red IBAI Connect - Servicios Escolares</p>
+</header>
+
+<main class="wrap">
+
+  <div class="aviso-formato">
+    <strong>Aviso:</strong> escribe todos los campos en MAYÚSCULAS Y SIN ACENTOS. El formulario los convierte automáticamente.
+  </div>
+
+  <div class="capturado-por">
+    <label>¿Quién está llenando esta ficha?</label>
+    <div class="chip-group" id="capturadoPorGroup">
+      <button type="button" class="chip active" data-valor="estudiante">Soy el estudiante</button>
+      <button type="button" class="chip" data-valor="personal">Administrador</button>
+    </div>
+  </div>
+
+  <form id="formFicha" novalidate>
+
+    <section class="card">
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="plantel">Plantel que realiza la inscripción *</label>
+          <select id="plantel" name="plantel" required>
+            <option value="">Selecciona un plantel</option>
+            <option value="Cacahoatán">Cacahoatán</option>
+            <option value="Comitán">Comitán</option>
+            <option value="Mazatán">Mazatán</option>
+            <option value="Motozintla">Motozintla</option>
+            <option value="Pijijiapan">Pijijiapan</option>
+            <option value="Tapachula [Ciencias de la Educación]">Tapachula [Ciencias de la Educación]</option>
+            <option value="Tapachula [Sede]">Tapachula [Sede]</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="programa_educativo">Nombre del programa educativo a cursar</label>
+          <select id="programa_educativo" name="programa_educativo">
+            <option value="">Selecciona un programa</option>
+            <option value="Licenciatura en Pedagogía (No escolarizado)">Licenciatura en Pedagogía (No escolarizado)</option>
+            <option value="Licenciatura en Psicología (No escolarizado)">Licenciatura en Psicología (No escolarizado)</option>
+            <option value="Maestría en Educación (No escolarizado)">Maestría en Educación (No escolarizado)</option>
+            <option value="Doctorado en Educación (No escolarizado)">Doctorado en Educación (No escolarizado)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>I. Datos de identificación del alumno</h2>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="primer_apellido">Primer apellido *</label>
+          <input type="text" id="primer_apellido" name="primer_apellido" required>
+        </div>
+        <div class="field">
+          <label for="segundo_apellido">Segundo apellido</label>
+          <input type="text" id="segundo_apellido" name="segundo_apellido">
+        </div>
+        <div class="field">
+          <label for="nombres">Nombre(s) *</label>
+          <input type="text" id="nombres" name="nombres" required>
+        </div>
+      </div>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="curp">CURP</label>
+          <input type="text" id="curp" name="curp" maxlength="18" style="text-transform:uppercase">
+        </div>
+        <div class="field">
+          <label for="fecha_nacimiento">Fecha de nacimiento</label>
+          <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
+        </div>
+        <div class="field">
+          <label for="edad">Edad</label>
+          <input type="number" id="edad" name="edad" min="0" max="120" readonly>
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="institucion_procedencia">Institución donde cursó su último grado de estudios</label>
+          <input type="text" id="institucion_procedencia" name="institucion_procedencia">
+        </div>
+        <div class="field">
+          <label for="promedio_ultimo_grado">Promedio del último grado de estudios</label>
+          <input type="number" id="promedio_ultimo_grado" name="promedio_ultimo_grado" min="0" max="10" step="0.1">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>II. Datos de domicilio del alumno</h2>
+      <div class="grid grid-3">
+        <div class="field field-wide">
+          <label for="calle">Calle</label>
+          <input type="text" id="calle" name="calle">
+        </div>
+        <div class="field">
+          <label for="no_ext">No. Ext.</label>
+          <input type="text" id="no_ext" name="no_ext">
+        </div>
+        <div class="field">
+          <label for="no_int">No. Int.</label>
+          <input type="text" id="no_int" name="no_int">
+        </div>
+      </div>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="colonia">Colonia</label>
+          <input type="text" id="colonia" name="colonia">
+        </div>
+        <div class="field">
+          <label for="cp">C.P.</label>
+          <input type="text" id="cp" name="cp" maxlength="5">
+        </div>
+        <div class="field">
+          <label for="localidad">Localidad</label>
+          <input type="text" id="localidad" name="localidad">
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="municipio">Municipio / Alcaldía</label>
+          <input type="text" id="municipio" name="municipio">
+        </div>
+        <div class="field">
+          <label for="entidad_federativa">Entidad federativa</label>
+          <input type="text" id="entidad_federativa" name="entidad_federativa">
+        </div>
+      </div>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="tel_casa">Tel. casa</label>
+          <input type="tel" id="tel_casa" name="tel_casa">
+        </div>
+        <div class="field">
+          <label for="tel_celular">Tel. celular</label>
+          <input type="tel" id="tel_celular" name="tel_celular">
+        </div>
+        <div class="field">
+          <label for="correo_electronico">Correo electrónico</label>
+          <input type="email" id="correo_electronico" name="correo_electronico">
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="seccionTutor">
+      <h2>III. Datos del padre o tutor</h2>
+      <p class="hint">Exclusivo para estudiantes menores de 21 años.</p>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="tutor_primer_apellido">Primer apellido</label>
+          <input type="text" id="tutor_primer_apellido" name="tutor_primer_apellido">
+        </div>
+        <div class="field">
+          <label for="tutor_segundo_apellido">Segundo apellido</label>
+          <input type="text" id="tutor_segundo_apellido" name="tutor_segundo_apellido">
+        </div>
+        <div class="field">
+          <label for="tutor_nombres">Nombre(s)</label>
+          <input type="text" id="tutor_nombres" name="tutor_nombres">
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="tutor_ocupacion">Ocupación</label>
+          <input type="text" id="tutor_ocupacion" name="tutor_ocupacion">
+        </div>
+        <div class="field">
+          <label for="tutor_telefono">Teléfono de contacto</label>
+          <input type="tel" id="tutor_telefono" name="tutor_telefono">
+        </div>
+      </div>
+    </section>
+
+    <section class="card card-documentos">
+      <h2>Documentos a enviar</h2>
+      <p class="hint">
+        Envía por correo electrónico los siguientes documentos escaneados en formato PDF, legibles, a
+        <a href="mailto:serviciosescolares@redibaiconnect.org">serviciosescolares@redibaiconnect.org</a>
+      </p>
+      <ul class="lista-documentos">
+        <li>Acta de nacimiento</li>
+        <li>CURP</li>
+        <li>INE</li>
+        <li>Último grado de estudios (certificado, título o cédula)</li>
+        <li>Fotografía digital con vestimenta formal</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <label class="checkbox-line">
+        <input type="checkbox" id="acepto_conformidad" name="acepto_conformidad" required>
+        Acepto y me comprometo a cumplir las normas de control escolar y los reglamentos institucionales.
+      </label>
+      <p class="fecha-firma" id="fechaFirmaTexto"></p>
+    </section>
+
+    <div id="mensaje" class="mensaje" hidden></div>
+
+    <button type="submit" id="btnEnviar">Enviar ficha de registro</button>
+  </form>
+
+</main>
+
+<script src="js/form.js"></script>
+</body>
+</html>

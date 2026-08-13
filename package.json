@@ -1,0 +1,17 @@
+{
+  "name": "ficha-registro-digital",
+  "version": "1.0.0",
+  "description": "App independiente para digitalizar la Ficha de Registro de estudiantes - IES Red IBAI Texcoco",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "initdb": "node server/db/initdb.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "express-basic-auth": "^1.2.1"
+  }
+}

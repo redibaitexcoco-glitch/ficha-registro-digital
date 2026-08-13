@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fichas de Registro - Panel administrativo</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>Fichas de Registro recibidas</h1>
+  <p>IES Red IBAI Connect - Servicios Escolares</p>
+</header>
+
+<main class="admin-wrap">
+  <div class="admin-filtros">
+    <input type="text" id="qInput" placeholder="Buscar por matrícula, CURP o nombre...">
+    <input type="date" id="desdeInput">
+    <input type="date" id="hastaInput">
+    <select id="revisadoInput">
+      <option value="">Todas</option>
+      <option value="false">Pendientes de revisar</option>
+      <option value="true">Ya revisadas</option>
+    </select>
+    <select id="programaInput">
+      <option value="">Todos los programas</option>
+      <option value="Licenciatura en Pedagogía (No escolarizado)">Licenciatura en Pedagogía</option>
+      <option value="Licenciatura en Psicología (No escolarizado)">Licenciatura en Psicología</option>
+      <option value="Maestría en Educación (No escolarizado)">Maestría en Educación</option>
+      <option value="Doctorado en Educación (No escolarizado)">Doctorado en Educación</option>
+    </select>
+    <select id="plantelInput">
+      <option value="">Todos los planteles</option>
+      <option value="Cacahoatán">Cacahoatán</option>
+      <option value="Comitán">Comitán</option>
+      <option value="Mazatán">Mazatán</option>
+      <option value="Motozintla">Motozintla</option>
+      <option value="Pijijiapan">Pijijiapan</option>
+      <option value="Tapachula [Ciencias de la Educación]">Tapachula [Ciencias de la Educación]</option>
+      <option value="Tapachula [Sede]">Tapachula [Sede]</option>
+    </select>
+    <button id="btnBuscar">Buscar</button>
+    <button id="btnDescargar" class="btn-descargar">Descargar base de datos (CSV)</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fecha</th>
+        <th>Plantel</th>
+        <th>Nombre</th>
+        <th>CURP</th>
+        <th>Programa</th>
+        <th>Capturado por</th>
+        <th>Revisado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</main>
+
+<script src="../js/admin.js"></script>
+</body>
+</html>
