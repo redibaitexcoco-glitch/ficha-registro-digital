@@ -50,14 +50,15 @@ CREATE TABLE IF NOT EXISTS fichas_registro (
     created_at              TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Migración para una base de datos ya existente (agrega la columna nueva sin perder datos).
+-- Debe ir ANTES de los índices, para que la columna ya exista cuando se indexa.
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS situacion VARCHAR(20) NOT NULL DEFAULT 'Inscrito';
+
 CREATE INDEX IF NOT EXISTS idx_fichas_curp ON fichas_registro (curp);
 CREATE INDEX IF NOT EXISTS idx_fichas_created_at ON fichas_registro (created_at);
 CREATE INDEX IF NOT EXISTS idx_fichas_programa ON fichas_registro (programa_educativo);
 CREATE INDEX IF NOT EXISTS idx_fichas_plantel ON fichas_registro (plantel);
 CREATE INDEX IF NOT EXISTS idx_fichas_situacion ON fichas_registro (situacion);
-
--- Migración para una base de datos ya existente (agrega la columna nueva sin perder datos):
-ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS situacion VARCHAR(20) NOT NULL DEFAULT 'Inscrito';
 
 -- Si la tabla ya existía de una versión anterior, ajusta las columnas así:
 -- ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS plantel VARCHAR(100);
