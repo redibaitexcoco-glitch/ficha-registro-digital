@@ -180,3 +180,29 @@ tr:hover { background: var(--gris-claro); }
 .btn-mini {
   background: var(--azul); color: #fff; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem;
 }
+.btn-mini.btn-editar { background: var(--marino); margin-right: 6px; }
+
+/* --- Modal de edición --- */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(24, 37, 56, 0.6);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 30px 16px; overflow-y: auto; z-index: 100;
+}
+.modal-caja {
+  background: #fff; border-radius: 12px; padding: 24px; max-width: 760px; width: 100%;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.modal-header h2 { margin: 0; color: var(--marino); font-size: 1.2rem; }
+.btn-cerrar-modal {
+  background: none; border: none; font-size: 1.6rem; line-height: 1; cursor: pointer; color: #667;
+}
+.modal-caja h3 {
+  font-size: 0.95rem; color: var(--marino); border-top: 1px solid var(--borde);
+  padding-top: 14px; margin-top: 6px;
+}
+.modal-acciones { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
+.modal-acciones button[type="submit"] { width: auto; padding: 10px 20px; }
+.btn-secundario {
+  background: #fff; color: var(--marino); border: 1px solid var(--borde);
+  padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600;
+}

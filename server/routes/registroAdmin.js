@@ -2,10 +2,50 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
 
+const PROGRAMAS_VALIDOS = [
+  'Licenciatura en Pedagogía (No escolarizado)',
+  'Licenciatura en Psicología (No escolarizado)',
+  'Maestría en Educación (No escolarizado)',
+  'Doctorado en Educación (No escolarizado)',
+];
+
+const PLANTELES_VALIDOS = [
+  'Cacahoatán',
+  'Comitán',
+  'Mazatán',
+  'Motozintla',
+  'Pijijiapan',
+  'Tapachula [Ciencias de la Educación]',
+  'Tapachula [Sede]',
+];
+
 function limpiar(valor) {
   if (typeof valor !== 'string') return valor;
   const v = valor.trim();
   return v === '' ? null : v;
+}
+
+// Misma normalización que usa el formulario público: mayúsculas sin acentos.
+function aMayusculasSinAcentos(valor) {
+  const limpio = limpiar(valor);
+  if (!limpio) return limpio;
+  return limpio
+    .replace(/[ñÑ]/g, '\u0001')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .replace(/\u0001/g, 'Ñ');
+}
+
+function calcularEdad(fechaNacimiento) {
+  if (!fechaNacimiento) return null;
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+  if (isNaN(nacimiento.getTime())) return null;
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const m = hoy.getMonth() - nacimiento.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
+  return edad;
 }
 
 // Construye el WHERE compartido por el listado y la exportación,
@@ -104,6 +144,75 @@ router.get('/:id', async (req, res) => {
   } catch (err) {
     console.error('Error al obtener ficha:', err);
     return res.status(500).json({ error: 'No se pudo obtener el registro.' });
+  }
+});
+
+// PATCH /api/fichas/:id - editar los datos capturados (corrige errores antes o al momento de revisar)
+router.patch('/:id', async (req, res) => {
+  const b = req.body || {};
+
+  if (b.programa_educativo && !PROGRAMAS_VALIDOS.includes(b.programa_educativo)) {
+    return res.status(400).json({ error: 'El programa educativo seleccionado no es válido.' });
+  }
+  if (b.plantel && !PLANTELES_VALIDOS.includes(b.plantel)) {
+    return res.status(400).json({ error: 'El plantel seleccionado no es válido.' });
+  }
+  if (!limpiar(b.primer_apellido) || !limpiar(b.nombres)) {
+    return res.status(400).json({ error: 'Primer apellido y nombre(s) son obligatorios.' });
+  }
+
+  const edad = b.edad ? Number(b.edad) : calcularEdad(b.fecha_nacimiento);
+
+  const sql = `
+    UPDATE fichas_registro SET
+      plantel = $1, programa_educativo = $2,
+      primer_apellido = $3, segundo_apellido = $4, nombres = $5, curp = $6,
+      fecha_nacimiento = $7, edad = $8, institucion_procedencia = $9, promedio_ultimo_grado = $10,
+      calle = $11, no_ext = $12, no_int = $13, colonia = $14, cp = $15, localidad = $16,
+      municipio = $17, entidad_federativa = $18, tel_casa = $19, tel_celular = $20, correo_electronico = $21,
+      tutor_primer_apellido = $22, tutor_segundo_apellido = $23, tutor_nombres = $24,
+      tutor_ocupacion = $25, tutor_telefono = $26
+    WHERE id = $27
+    RETURNING id;
+  `;
+
+  const valores = [
+    limpiar(b.plantel),
+    limpiar(b.programa_educativo),
+    aMayusculasSinAcentos(b.primer_apellido),
+    aMayusculasSinAcentos(b.segundo_apellido),
+    aMayusculasSinAcentos(b.nombres),
+    limpiar(b.curp) ? b.curp.trim().toUpperCase() : null,
+    b.fecha_nacimiento || null,
+    edad,
+    aMayusculasSinAcentos(b.institucion_procedencia),
+    b.promedio_ultimo_grado ? Number(b.promedio_ultimo_grado) : null,
+    aMayusculasSinAcentos(b.calle),
+    aMayusculasSinAcentos(b.no_ext),
+    aMayusculasSinAcentos(b.no_int),
+    aMayusculasSinAcentos(b.colonia),
+    limpiar(b.cp),
+    aMayusculasSinAcentos(b.localidad),
+    aMayusculasSinAcentos(b.municipio),
+    aMayusculasSinAcentos(b.entidad_federativa),
+    limpiar(b.tel_casa),
+    limpiar(b.tel_celular),
+    limpiar(b.correo_electronico),
+    aMayusculasSinAcentos(b.tutor_primer_apellido),
+    aMayusculasSinAcentos(b.tutor_segundo_apellido),
+    aMayusculasSinAcentos(b.tutor_nombres),
+    aMayusculasSinAcentos(b.tutor_ocupacion),
+    limpiar(b.tutor_telefono),
+    req.params.id,
+  ];
+
+  try {
+    const result = await pool.query(sql, valores);
+    if (!result.rows.length) return res.status(404).json({ error: 'No encontrado' });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('Error al editar ficha:', err);
+    return res.status(500).json({ error: 'No se pudo guardar la corrección.' });
   }
 });
 
