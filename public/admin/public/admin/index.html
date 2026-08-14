@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fichas de Registro - Panel administrativo</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>Fichas de Registro recibidas</h1>
+  <p>IES Red IBAI Connect - Servicios Escolares</p>
+</header>
+
+<main class="admin-wrap">
+  <div class="admin-filtros">
+    <input type="text" id="qInput" placeholder="Buscar por matrícula, CURP o nombre...">
+    <input type="date" id="desdeInput">
+    <input type="date" id="hastaInput">
+    <select id="revisadoInput">
+      <option value="">Todas</option>
+      <option value="false">Pendientes de revisar</option>
+      <option value="true">Ya revisadas</option>
+    </select>
+    <select id="programaInput">
+      <option value="">Todos los programas</option>
+      <option value="Licenciatura en Pedagogía (No escolarizado)">Licenciatura en Pedagogía</option>
+      <option value="Licenciatura en Psicología (No escolarizado)">Licenciatura en Psicología</option>
+      <option value="Maestría en Educación (No escolarizado)">Maestría en Educación</option>
+      <option value="Doctorado en Educación (No escolarizado)">Doctorado en Educación</option>
+    </select>
+    <select id="plantelInput">
+      <option value="">Todos los planteles</option>
+      <option value="Cacahoatán">Cacahoatán</option>
+      <option value="Comitán">Comitán</option>
+      <option value="Mazatán">Mazatán</option>
+      <option value="Motozintla">Motozintla</option>
+      <option value="Pijijiapan">Pijijiapan</option>
+      <option value="Tapachula [Ciencias de la Educación]">Tapachula [Ciencias de la Educación]</option>
+      <option value="Tapachula [Sede]">Tapachula [Sede]</option>
+    </select>
+    <button id="btnBuscar">Buscar</button>
+    <button id="btnDescargar" class="btn-descargar">Descargar base de datos (CSV)</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fecha</th>
+        <th>Plantel</th>
+        <th>Nombre</th>
+        <th>CURP</th>
+        <th>Programa</th>
+        <th>Capturado por</th>
+        <th>Revisado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</main>
+
+<div id="modalEditar" class="modal-overlay" hidden>
+  <div class="modal-caja">
+    <div class="modal-header">
+      <h2>Editar ficha</h2>
+      <button type="button" id="btnCerrarModal" class="btn-cerrar-modal" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <form id="formEditar">
+      <input type="hidden" id="editId">
+
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="editPlantel">Plantel</label>
+          <select id="editPlantel" name="plantel">
+            <option value="">Selecciona un plantel</option>
+            <option value="Cacahoatán">Cacahoatán</option>
+            <option value="Comitán">Comitán</option>
+            <option value="Mazatán">Mazatán</option>
+            <option value="Motozintla">Motozintla</option>
+            <option value="Pijijiapan">Pijijiapan</option>
+            <option value="Tapachula [Ciencias de la Educación]">Tapachula [Ciencias de la Educación]</option>
+            <option value="Tapachula [Sede]">Tapachula [Sede]</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="editPrograma">Programa educativo</label>
+          <select id="editPrograma" name="programa_educativo">
+            <option value="">Selecciona un programa</option>
+            <option value="Licenciatura en Pedagogía (No escolarizado)">Licenciatura en Pedagogía (No escolarizado)</option>
+            <option value="Licenciatura en Psicología (No escolarizado)">Licenciatura en Psicología (No escolarizado)</option>
+            <option value="Maestría en Educación (No escolarizado)">Maestría en Educación (No escolarizado)</option>
+            <option value="Doctorado en Educación (No escolarizado)">Doctorado en Educación (No escolarizado)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="editPrimerApellido">Primer apellido *</label>
+          <input type="text" id="editPrimerApellido" name="primer_apellido" required>
+        </div>
+        <div class="field">
+          <label for="editSegundoApellido">Segundo apellido</label>
+          <input type="text" id="editSegundoApellido" name="segundo_apellido">
+        </div>
+        <div class="field">
+          <label for="editNombres">Nombre(s) *</label>
+          <input type="text" id="editNombres" name="nombres" required>
+        </div>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="editCurp">CURP</label>
+          <input type="text" id="editCurp" name="curp" maxlength="18">
+        </div>
+        <div class="field">
+          <label for="editFechaNacimiento">Fecha de nacimiento</label>
+          <input type="date" id="editFechaNacimiento" name="fecha_nacimiento">
+        </div>
+        <div class="field">
+          <label for="editPromedio">Promedio último grado</label>
+          <input type="number" id="editPromedio" name="promedio_ultimo_grado" min="0" max="10" step="0.1">
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="editInstitucion">Institución de procedencia</label>
+          <input type="text" id="editInstitucion" name="institucion_procedencia">
+        </div>
+        <div class="field">
+          <label for="editCorreo">Correo electrónico</label>
+          <input type="email" id="editCorreo" name="correo_electronico">
+        </div>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="field field-wide">
+          <label for="editCalle">Calle</label>
+          <input type="text" id="editCalle" name="calle">
+        </div>
+        <div class="field">
+          <label for="editNoExt">No. Ext.</label>
+          <input type="text" id="editNoExt" name="no_ext">
+        </div>
+        <div class="field">
+          <label for="editNoInt">No. Int.</label>
+          <input type="text" id="editNoInt" name="no_int">
+        </div>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="editColonia">Colonia</label>
+          <input type="text" id="editColonia" name="colonia">
+        </div>
+        <div class="field">
+          <label for="editCp">C.P.</label>
+          <input type="text" id="editCp" name="cp" maxlength="5">
+        </div>
+        <div class="field">
+          <label for="editLocalidad">Localidad</label>
+          <input type="text" id="editLocalidad" name="localidad">
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="editMunicipio">Municipio / Alcaldía</label>
+          <input type="text" id="editMunicipio" name="municipio">
+        </div>
+        <div class="field">
+          <label for="editEntidad">Entidad federativa</label>
+          <input type="text" id="editEntidad" name="entidad_federativa">
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="editTelCasa">Tel. casa</label>
+          <input type="tel" id="editTelCasa" name="tel_casa">
+        </div>
+        <div class="field">
+          <label for="editTelCelular">Tel. celular</label>
+          <input type="tel" id="editTelCelular" name="tel_celular">
+        </div>
+      </div>
+
+      <h3>Datos del padre o tutor</h3>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="editTutorPrimerApellido">Primer apellido</label>
+          <input type="text" id="editTutorPrimerApellido" name="tutor_primer_apellido">
+        </div>
+        <div class="field">
+          <label for="editTutorSegundoApellido">Segundo apellido</label>
+          <input type="text" id="editTutorSegundoApellido" name="tutor_segundo_apellido">
+        </div>
+        <div class="field">
+          <label for="editTutorNombres">Nombre(s)</label>
+          <input type="text" id="editTutorNombres" name="tutor_nombres">
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="editTutorOcupacion">Ocupación</label>
+          <input type="text" id="editTutorOcupacion" name="tutor_ocupacion">
+        </div>
+        <div class="field">
+          <label for="editTutorTelefono">Teléfono de contacto</label>
+          <input type="tel" id="editTutorTelefono" name="tutor_telefono">
+        </div>
+      </div>
+
+      <div id="mensajeEditar" class="mensaje" hidden></div>
+
+      <div class="modal-acciones">
+        <button type="button" id="btnCancelarEditar" class="btn-secundario">Cancelar</button>
+        <button type="submit" id="btnGuardarEditar">Guardar corrección</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../js/admin.js"></script>
+</body>
+</html>
