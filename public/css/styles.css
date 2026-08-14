@@ -188,6 +188,7 @@ tr:hover { background: var(--gris-claro); }
   display: flex; align-items: flex-start; justify-content: center;
   padding: 30px 16px; overflow-y: auto; z-index: 100;
 }
+.modal-overlay[hidden] { display: none; }
 .modal-caja {
   background: #fff; border-radius: 12px; padding: 24px; max-width: 760px; width: 100%;
 }
