@@ -19,6 +19,8 @@ const PLANTELES_VALIDOS = [
   'Tapachula [Sede]',
 ];
 
+const SITUACIONES_VALIDAS = ['Inscrito', 'Baja', 'Baja temporal'];
+
 function limpiar(valor) {
   if (typeof valor !== 'string') return valor;
   const v = valor.trim();
@@ -51,7 +53,7 @@ function calcularEdad(fechaNacimiento) {
 // Construye el WHERE compartido por el listado y la exportación,
 // a partir de los mismos filtros que usa el panel (búsqueda, fechas, programa, plantel, revisado).
 function construirFiltro(query) {
-  const { q, desde, hasta, revisado, programa, plantel } = query;
+  const { q, desde, hasta, revisado, programa, plantel, situacion } = query;
   const condiciones = [];
   const valores = [];
 
@@ -80,6 +82,10 @@ function construirFiltro(query) {
   if (plantel) {
     valores.push(plantel);
     condiciones.push(`plantel = $${valores.length}`);
+  }
+  if (situacion) {
+    valores.push(situacion);
+    condiciones.push(`situacion = $${valores.length}`);
   }
 
   const where = condiciones.length ? `WHERE ${condiciones.join(' AND ')}` : '';
@@ -213,6 +219,37 @@ router.patch('/:id', async (req, res) => {
   } catch (err) {
     console.error('Error al editar ficha:', err);
     return res.status(500).json({ error: 'No se pudo guardar la corrección.' });
+  }
+});
+
+// PATCH /api/fichas/:id/situacion - registrar Inscrito/Baja/Baja temporal (antes de marcar revisado)
+router.patch('/:id/situacion', async (req, res) => {
+  const { situacion } = req.body || {};
+  if (!SITUACIONES_VALIDAS.includes(situacion)) {
+    return res.status(400).json({ error: 'La situación indicada no es válida.' });
+  }
+  try {
+    const result = await pool.query(
+      'UPDATE fichas_registro SET situacion = $1 WHERE id = $2 RETURNING id',
+      [situacion, req.params.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'No encontrado' });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('Error al actualizar situación:', err);
+    return res.status(500).json({ error: 'No se pudo actualizar la situación.' });
+  }
+});
+
+// DELETE /api/fichas/:id - eliminar un registro capturado
+router.delete('/:id', async (req, res) => {
+  try {
+    const result = await pool.query('DELETE FROM fichas_registro WHERE id = $1 RETURNING id', [req.params.id]);
+    if (!result.rows.length) return res.status(404).json({ error: 'No encontrado' });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('Error al eliminar ficha:', err);
+    return res.status(500).json({ error: 'No se pudo eliminar el registro.' });
   }
 });
 

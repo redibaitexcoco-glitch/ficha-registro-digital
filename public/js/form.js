@@ -56,10 +56,7 @@
 
     if (btn.dataset.valor === 'personal') {
       const autorizado = await solicitarAutorizacionAdmin();
-      if (!autorizado) {
-        mostrarMensaje('No tiene autorización para visitar esta página.', 'error');
-        return;
-      }
+      if (!autorizado) return;
     }
 
     capturadoPor = btn.dataset.valor;

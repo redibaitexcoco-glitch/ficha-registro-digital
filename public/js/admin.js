@@ -6,6 +6,7 @@
   const revisadoInput = document.getElementById('revisadoInput');
   const programaInput = document.getElementById('programaInput');
   const plantelInput = document.getElementById('plantelInput');
+  const situacionInput = document.getElementById('situacionInput');
   const btnBuscar = document.getElementById('btnBuscar');
   const btnDescargar = document.getElementById('btnDescargar');
 
@@ -23,6 +24,7 @@
     if (revisadoInput.value) params.set('revisado', revisadoInput.value);
     if (programaInput.value) params.set('programa', programaInput.value);
     if (plantelInput.value) params.set('plantel', plantelInput.value);
+    if (situacionInput.value) params.set('situacion', situacionInput.value);
     return params;
   }
 
@@ -31,7 +33,7 @@
 
     const resp = await fetch(`/api/fichas?${params.toString()}`);
     if (!resp.ok) {
-      tbody.innerHTML = '<tr><td colspan="9">Error al cargar el listado.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10">Error al cargar el listado.</td></tr>';
       return;
     }
     const fichas = await resp.json();
@@ -40,7 +42,7 @@
 
   function render(fichas) {
     if (!fichas.length) {
-      tbody.innerHTML = '<tr><td colspan="9">Sin resultados.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10">Sin resultados.</td></tr>';
       return;
     }
     tbody.innerHTML = fichas.map((f) => `
@@ -52,10 +54,18 @@
         <td>${f.curp || '-'}</td>
         <td>${f.programa_educativo || '-'}</td>
         <td>${f.capturado_por === 'personal' ? 'Personal' : 'Estudiante'}</td>
+        <td>
+          <select class="select-situacion" data-id="${f.id}">
+            <option value="Inscrito" ${f.situacion === 'Inscrito' ? 'selected' : ''}>Inscrito</option>
+            <option value="Baja" ${f.situacion === 'Baja' ? 'selected' : ''}>Baja</option>
+            <option value="Baja temporal" ${f.situacion === 'Baja temporal' ? 'selected' : ''}>Baja temporal</option>
+          </select>
+        </td>
         <td><span class="badge ${f.revisado ? 'si' : 'no'}">${f.revisado ? 'Revisado' : 'Pendiente'}</span></td>
         <td>
           <button class="btn-mini btn-editar" data-id="${f.id}" data-action="editar">Editar</button>
           ${f.revisado ? '' : `<button class="btn-mini" data-id="${f.id}" data-action="revisar">Marcar revisado</button>`}
+          <button class="btn-mini btn-eliminar" data-id="${f.id}" data-action="eliminar">Eliminar</button>
         </td>
       </tr>
     `).join('');
@@ -71,6 +81,20 @@
       return;
     }
 
+    if (btn.dataset.action === 'eliminar') {
+      const confirmar = confirm('¿Eliminar este registro de forma permanente? Esta acción no se puede deshacer.');
+      if (!confirmar) return;
+      btn.disabled = true;
+      const resp = await fetch(`/api/fichas/${id}`, { method: 'DELETE' });
+      if (!resp.ok) {
+        alert('No se pudo eliminar el registro.');
+        btn.disabled = false;
+        return;
+      }
+      cargar();
+      return;
+    }
+
     const revisado_por = prompt('¿Quién revisó este registro?') || '';
     btn.disabled = true;
     await fetch(`/api/fichas/${id}/revisar`, {
@@ -79,6 +103,19 @@
       body: JSON.stringify({ revisado_por }),
     });
     cargar();
+  });
+
+  tbody.addEventListener('change', async (e) => {
+    const select = e.target.closest('.select-situacion');
+    if (!select) return;
+    const id = select.dataset.id;
+    select.disabled = true;
+    await fetch(`/api/fichas/${id}/situacion`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ situacion: select.value }),
+    });
+    select.disabled = false;
   });
 
   async function abrirModalEditar(id) {
