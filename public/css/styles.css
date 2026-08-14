@@ -178,11 +178,12 @@ tr:hover { background: var(--gris-claro); }
 .badge { padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
 .badge.si { background: #e7f5ea; color: var(--verde); }
 .badge.no { background: #fdf2e3; color: var(--dorado); }
+.celda-acciones { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .btn-mini {
   background: var(--azul); color: #fff; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem;
 }
-.btn-mini.btn-editar { background: var(--marino); margin-right: 6px; }
-.btn-mini.btn-eliminar { background: var(--rojo); margin-left: 6px; }
+.btn-mini.btn-editar { background: var(--marino); }
+.btn-mini.btn-eliminar { background: var(--rojo); }
 .select-situacion {
   padding: 5px 8px; border: 1px solid var(--borde); border-radius: 6px; font-size: 0.8rem; background: #fff;
 }
