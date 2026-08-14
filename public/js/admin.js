@@ -63,9 +63,11 @@
         </td>
         <td><span class="badge ${f.revisado ? 'si' : 'no'}">${f.revisado ? 'Revisado' : 'Pendiente'}</span></td>
         <td>
-          <button class="btn-mini btn-editar" data-id="${f.id}" data-action="editar">Editar</button>
-          ${f.revisado ? '' : `<button class="btn-mini" data-id="${f.id}" data-action="revisar">Marcar revisado</button>`}
-          <button class="btn-mini btn-eliminar" data-id="${f.id}" data-action="eliminar">Eliminar</button>
+          <div class="celda-acciones">
+            <button class="btn-mini btn-editar" data-id="${f.id}" data-action="editar">Editar</button>
+            ${f.revisado ? '' : `<button class="btn-mini" data-id="${f.id}" data-action="revisar">Marcar revisado</button>`}
+            <button class="btn-mini btn-eliminar" data-id="${f.id}" data-action="eliminar">Eliminar</button>
+          </div>
         </td>
       </tr>
     `).join('');
