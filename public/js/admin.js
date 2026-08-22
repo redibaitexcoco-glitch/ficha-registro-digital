@@ -32,7 +32,9 @@
     { campo: 'doc_acta_nacimiento_id', etiqueta: 'Acta' },
     { campo: 'doc_curp_id', etiqueta: 'CURP' },
     { campo: 'doc_ine_id', etiqueta: 'INE' },
-    { campo: 'doc_ultimo_grado_id', etiqueta: 'Últ. grado' },
+    { campo: 'doc_certificado_id', etiqueta: 'Certificado' },
+    { campo: 'doc_titulo_id', etiqueta: 'Título' },
+    { campo: 'doc_cedula_id', etiqueta: 'Cédula' },
     { campo: 'doc_fotografia_id', etiqueta: 'Foto' },
   ];
 

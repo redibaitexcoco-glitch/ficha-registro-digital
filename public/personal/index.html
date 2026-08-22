@@ -15,7 +15,7 @@
 <main class="wrap">
 
   <div class="aviso-formato">
-    <strong>Aviso:</strong> complete todos los campos obligatorios marcados con asterisco (*), utilizando MAYÚSCULAS Y SIN ACENTOS (el formulario los convierte automáticamente). La información proporcionada tendrá carácter de declaración jurada y será utilizada exclusivamente para la integración del expediente académico institucional.
+    <strong>Aviso:</strong> complete todos los campos obligatorios marcados con asterisco (*), utilizando MAYÚSCULAS Y SIN ACENTOS (el formulario los convierte automáticamente). La información proporcionada tendrá carácter de declaración veraz y será utilizada exclusivamente para la integración del expediente académico institucional.
   </div>
 
   <form id="formFicha" novalidate>
@@ -57,8 +57,8 @@
           <input type="text" id="primer_apellido" name="primer_apellido" required>
         </div>
         <div class="field">
-          <label for="segundo_apellido">Segundo apellido</label>
-          <input type="text" id="segundo_apellido" name="segundo_apellido">
+          <label for="segundo_apellido">Segundo apellido *</label>
+          <input type="text" id="segundo_apellido" name="segundo_apellido" required>
         </div>
         <div class="field">
           <label for="nombres">Nombre(s) *</label>
@@ -67,8 +67,8 @@
       </div>
       <div class="grid grid-3">
         <div class="field">
-          <label for="curp">CURP</label>
-          <input type="text" id="curp" name="curp" maxlength="18" style="text-transform:uppercase">
+          <label for="curp">CURP *</label>
+          <input type="text" id="curp" name="curp" maxlength="18" style="text-transform:uppercase" required>
         </div>
         <div class="field">
           <label for="fecha_nacimiento">Fecha de nacimiento</label>
@@ -81,8 +81,8 @@
       </div>
       <div class="grid grid-2">
         <div class="field">
-          <label for="institucion_procedencia">Institución donde cursó su último grado de estudios</label>
-          <input type="text" id="institucion_procedencia" name="institucion_procedencia">
+          <label for="institucion_procedencia">Institución donde cursó su último grado de estudios *</label>
+          <input type="text" id="institucion_procedencia" name="institucion_procedencia" required>
         </div>
         <div class="field">
           <label for="promedio_ultimo_grado">Promedio del último grado de estudios</label>
@@ -137,12 +137,12 @@
           <input type="tel" id="tel_casa" name="tel_casa">
         </div>
         <div class="field">
-          <label for="tel_celular">Tel. celular</label>
-          <input type="tel" id="tel_celular" name="tel_celular">
+          <label for="tel_celular">Tel. celular *</label>
+          <input type="tel" id="tel_celular" name="tel_celular" required>
         </div>
         <div class="field">
-          <label for="correo_electronico">Correo electrónico</label>
-          <input type="email" id="correo_electronico" name="correo_electronico">
+          <label for="correo_electronico">Correo electrónico *</label>
+          <input type="email" id="correo_electronico" name="correo_electronico" required>
         </div>
       </div>
     </section>
@@ -194,10 +194,21 @@
         <label for="doc_ine">INE</label>
         <input type="file" id="doc_ine" name="doc_ine" accept="application/pdf">
       </div>
-      <div class="field">
-        <label for="doc_ultimo_grado">Último grado de estudios (certificado, título o cédula)</label>
-        <input type="file" id="doc_ultimo_grado" name="doc_ultimo_grado" accept="application/pdf">
-      </div>
+      <fieldset class="fieldset-documento">
+        <legend>Último grado de estudios</legend>
+        <div class="field">
+          <label for="doc_certificado">Certificado de estudios</label>
+          <input type="file" id="doc_certificado" name="doc_certificado" accept="application/pdf">
+        </div>
+        <div class="field">
+          <label for="doc_titulo">Título</label>
+          <input type="file" id="doc_titulo" name="doc_titulo" accept="application/pdf">
+        </div>
+        <div class="field">
+          <label for="doc_cedula">Cédula Profesional</label>
+          <input type="file" id="doc_cedula" name="doc_cedula" accept="application/pdf">
+        </div>
+      </fieldset>
       <div class="field">
         <label for="doc_foto">Fotografía digital con vestimenta formal</label>
         <input type="file" id="doc_foto" name="doc_foto" accept="application/pdf,image/jpeg,image/png">

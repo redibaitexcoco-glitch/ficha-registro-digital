@@ -52,7 +52,9 @@ CREATE TABLE IF NOT EXISTS fichas_registro (
     doc_acta_nacimiento_id    VARCHAR(100),
     doc_curp_id               VARCHAR(100),
     doc_ine_id                VARCHAR(100),
-    doc_ultimo_grado_id       VARCHAR(100),
+    doc_certificado_id        VARCHAR(100),
+    doc_titulo_id              VARCHAR(100),
+    doc_cedula_id              VARCHAR(100),
     doc_fotografia_id         VARCHAR(100),
 
     created_at              TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -65,7 +67,10 @@ ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS drive_folder_id VARCHAR(100
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_acta_nacimiento_id VARCHAR(100);
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_curp_id VARCHAR(100);
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_ine_id VARCHAR(100);
-ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_ultimo_grado_id VARCHAR(100);
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_certificado_id VARCHAR(100);
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_titulo_id VARCHAR(100);
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_cedula_id VARCHAR(100);
+ALTER TABLE fichas_registro DROP COLUMN IF EXISTS doc_ultimo_grado_id;
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_fotografia_id VARCHAR(100);
 
 CREATE INDEX IF NOT EXISTS idx_fichas_curp ON fichas_registro (curp);

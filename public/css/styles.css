@@ -46,6 +46,20 @@ body {
 
 .card-documentos { background: #eef6f8; border-color: var(--azul); }
 .card-documentos a { color: var(--azul); font-weight: 600; }
+.fieldset-documento {
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 14px;
+  margin: 14px 0;
+}
+.fieldset-documento legend {
+  font-weight: 700;
+  color: var(--marino);
+  padding: 0 6px;
+  font-size: 0.95rem;
+}
+.fieldset-documento .field { margin-bottom: 12px; }
+.fieldset-documento .field:last-child { margin-bottom: 0; }
 
 .card {
   background: #fff;

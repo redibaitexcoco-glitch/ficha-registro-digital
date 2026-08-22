@@ -11,7 +11,9 @@ const CAMPOS_DOCUMENTO = {
   acta_nacimiento: { columna: 'doc_acta_nacimiento_id', etiqueta: 'ActaNacimiento', tipos: ['application/pdf'] },
   curp: { columna: 'doc_curp_id', etiqueta: 'CURP', tipos: ['application/pdf'] },
   ine: { columna: 'doc_ine_id', etiqueta: 'INE', tipos: ['application/pdf'] },
-  ultimo_grado: { columna: 'doc_ultimo_grado_id', etiqueta: 'UltimoGrado', tipos: ['application/pdf'] },
+  certificado: { columna: 'doc_certificado_id', etiqueta: 'Certificado', tipos: ['application/pdf'] },
+  titulo: { columna: 'doc_titulo_id', etiqueta: 'Titulo', tipos: ['application/pdf'] },
+  cedula: { columna: 'doc_cedula_id', etiqueta: 'CedulaProfesional', tipos: ['application/pdf'] },
   fotografia: { columna: 'doc_fotografia_id', etiqueta: 'Fotografia', tipos: ['application/pdf', 'image/jpeg', 'image/png'] },
 };
 

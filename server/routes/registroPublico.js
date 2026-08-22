@@ -2,7 +2,16 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
 
-const CAMPOS_REQUERIDOS = ['primer_apellido', 'nombres', 'plantel'];
+const CAMPOS_REQUERIDOS = [
+  'primer_apellido',
+  'segundo_apellido',
+  'nombres',
+  'plantel',
+  'curp',
+  'institucion_procedencia',
+  'tel_celular',
+  'correo_electronico',
+];
 
 const PROGRAMAS_VALIDOS = [
   'Licenciatura en Pedagogía (No escolarizado)',

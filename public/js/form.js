@@ -15,7 +15,9 @@
     { inputId: 'doc_acta', campo: 'acta_nacimiento' },
     { inputId: 'doc_curp_archivo', campo: 'curp' },
     { inputId: 'doc_ine', campo: 'ine' },
-    { inputId: 'doc_ultimo_grado', campo: 'ultimo_grado' },
+    { inputId: 'doc_certificado', campo: 'certificado' },
+    { inputId: 'doc_titulo', campo: 'titulo' },
+    { inputId: 'doc_cedula', campo: 'cedula' },
     { inputId: 'doc_foto', campo: 'fotografia' },
   ];
   const TAMANO_MAXIMO = 5 * 1024 * 1024; // 5 MB
