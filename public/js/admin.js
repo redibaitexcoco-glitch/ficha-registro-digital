@@ -28,12 +28,31 @@
     return params;
   }
 
+  const DOCUMENTOS_CHECKLIST = [
+    { campo: 'doc_acta_nacimiento_id', etiqueta: 'Acta' },
+    { campo: 'doc_curp_id', etiqueta: 'CURP' },
+    { campo: 'doc_ine_id', etiqueta: 'INE' },
+    { campo: 'doc_ultimo_grado_id', etiqueta: 'Últ. grado' },
+    { campo: 'doc_fotografia_id', etiqueta: 'Foto' },
+  ];
+
+  function celdaDocumentos(f) {
+    const items = DOCUMENTOS_CHECKLIST.map(({ campo, etiqueta }) => {
+      const cargado = Boolean(f[campo]);
+      return `<span class="doc-chip ${cargado ? 'doc-ok' : 'doc-pendiente'}" title="${etiqueta}: ${cargado ? 'cargado' : 'pendiente'}">${etiqueta}</span>`;
+    }).join('');
+    const enlaceCarpeta = f.drive_folder_id
+      ? `<a href="https://drive.google.com/drive/folders/${f.drive_folder_id}" target="_blank" rel="noopener" class="doc-carpeta">Ver carpeta</a>`
+      : '';
+    return `<div class="celda-documentos">${items}${enlaceCarpeta}</div>`;
+  }
+
   async function cargar() {
     const params = construirParams();
 
     const resp = await fetch(`/api/fichas?${params.toString()}`);
     if (!resp.ok) {
-      tbody.innerHTML = '<tr><td colspan="10">Error al cargar el listado.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="11">Error al cargar el listado.</td></tr>';
       return;
     }
     const fichas = await resp.json();
@@ -42,7 +61,7 @@
 
   function render(fichas) {
     if (!fichas.length) {
-      tbody.innerHTML = '<tr><td colspan="10">Sin resultados.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="11">Sin resultados.</td></tr>';
       return;
     }
     tbody.innerHTML = fichas.map((f) => `
@@ -61,6 +80,7 @@
             <option value="Baja temporal" ${f.situacion === 'Baja temporal' ? 'selected' : ''}>Baja temporal</option>
           </select>
         </td>
+        <td>${celdaDocumentos(f)}</td>
         <td><span class="badge ${f.revisado ? 'si' : 'no'}">${f.revisado ? 'Revisado' : 'Pendiente'}</span></td>
         <td>
           <div class="celda-acciones">

@@ -47,12 +47,26 @@ CREATE TABLE IF NOT EXISTS fichas_registro (
     revisado_por            VARCHAR(150),
     revisado_en             TIMESTAMPTZ,
 
+    -- Documentos (Google Drive): cada columna guarda el file id de Drive si ya se subió, o NULL si falta
+    drive_folder_id           VARCHAR(100),
+    doc_acta_nacimiento_id    VARCHAR(100),
+    doc_curp_id               VARCHAR(100),
+    doc_ine_id                VARCHAR(100),
+    doc_ultimo_grado_id       VARCHAR(100),
+    doc_fotografia_id         VARCHAR(100),
+
     created_at              TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Migración para una base de datos ya existente (agrega la columna nueva sin perder datos).
--- Debe ir ANTES de los índices, para que la columna ya exista cuando se indexa.
+-- Migración para una base de datos ya existente (agrega columnas nuevas sin perder datos).
+-- Debe ir ANTES de los índices, para que las columnas ya existan cuando se indexan.
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS situacion VARCHAR(20) NOT NULL DEFAULT 'Inscrito';
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS drive_folder_id VARCHAR(100);
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_acta_nacimiento_id VARCHAR(100);
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_curp_id VARCHAR(100);
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_ine_id VARCHAR(100);
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_ultimo_grado_id VARCHAR(100);
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_fotografia_id VARCHAR(100);
 
 CREATE INDEX IF NOT EXISTS idx_fichas_curp ON fichas_registro (curp);
 CREATE INDEX IF NOT EXISTS idx_fichas_created_at ON fichas_registro (created_at);
