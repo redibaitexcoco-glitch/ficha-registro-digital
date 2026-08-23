@@ -82,6 +82,9 @@ async function obtenerOCrearCarpetaEstudiante({ curp, primerApellido, segundoApe
     q: `name = '${nombreCarpeta.replace(/'/g, "\\'")}' and '${parent}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
     fields: 'files(id, name)',
     spaces: 'drive',
+    corpora: 'allDrives',
+    supportsAllDrives: true,
+    includeItemsFromAllDrives: true,
   });
 
   if (busqueda.data.files && busqueda.data.files.length) {
@@ -95,6 +98,7 @@ async function obtenerOCrearCarpetaEstudiante({ curp, primerApellido, segundoApe
       parents: [parent],
     },
     fields: 'id',
+    supportsAllDrives: true,
   });
 
   return nuevaCarpeta.data.id;
@@ -118,6 +122,7 @@ async function subirArchivo({ buffer, nombreArchivo, mimeType, carpetaId }) {
       body: Readable.from(buffer),
     },
     fields: 'id, webViewLink',
+    supportsAllDrives: true,
   });
 
   return { fileId: respuesta.data.id, url: respuesta.data.webViewLink };
