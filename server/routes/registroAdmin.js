@@ -3,8 +3,6 @@ const router = express.Router();
 const pool = require('../db/pool');
 
 const PROGRAMAS_VALIDOS = [
-  'Licenciatura en Pedagogía (No escolarizado)',
-  'Licenciatura en Psicología (No escolarizado)',
   'Maestría en Educación (No escolarizado)',
   'Doctorado en Educación (No escolarizado)',
 ];
@@ -17,6 +15,7 @@ const PLANTELES_VALIDOS = [
   'Pijijiapan',
   'Tapachula [Ciencias de la Educación]',
   'Tapachula [Sede]',
+  'Texcoco',
 ];
 
 const SITUACIONES_VALIDAS = ['Inscrito', 'Baja', 'Baja temporal'];

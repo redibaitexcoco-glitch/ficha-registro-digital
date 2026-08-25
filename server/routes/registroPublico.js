@@ -14,8 +14,6 @@ const CAMPOS_REQUERIDOS = [
 ];
 
 const PROGRAMAS_VALIDOS = [
-  'Licenciatura en Pedagogía (No escolarizado)',
-  'Licenciatura en Psicología (No escolarizado)',
   'Maestría en Educación (No escolarizado)',
   'Doctorado en Educación (No escolarizado)',
 ];
@@ -28,6 +26,7 @@ const PLANTELES_VALIDOS = [
   'Pijijiapan',
   'Tapachula [Ciencias de la Educación]',
   'Tapachula [Sede]',
+  'Texcoco',
 ];
 
 function limpiar(valor) {
