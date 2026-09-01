@@ -7,8 +7,43 @@
   const edadInput = document.getElementById('edad');
   const fechaFirmaTexto = document.getElementById('fechaFirmaTexto');
 
-  const hoy = new Date();
-  fechaFirmaTexto.textContent = `Texcoco, México a ${hoy.toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+  // Muestra la fecha de llenado. Si el navegador tiene permiso de ubicación,
+  // se le antepone "Municipio, Estado a"; si no, solo queda la fecha.
+  function actualizarFechaFirma() {
+    const hoy = new Date();
+    const fechaTexto = hoy.toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+    fechaFirmaTexto.textContent = fechaTexto;
+
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      async (posicion) => {
+        try {
+          const { latitude, longitude } = posicion.coords;
+          const resp = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`
+          );
+          if (!resp.ok) return;
+          const datos = await resp.json();
+          const direccion = datos.address || {};
+          const municipio =
+            direccion.municipality || direccion.city || direccion.town || direccion.county || direccion.village;
+          const estado = direccion.state;
+          if (municipio && estado) {
+            fechaFirmaTexto.textContent = `${municipio}, ${estado} a ${fechaTexto}`;
+          }
+        } catch (err) {
+          // Sin conexión al servicio de ubicación: se deja solo la fecha.
+        }
+      },
+      () => {
+        // Permiso denegado o no disponible: se deja solo la fecha.
+      },
+      { timeout: 5000 }
+    );
+  }
+
+  actualizarFechaFirma();
 
   // Campos de documento: id del <input type="file"> en el HTML -> nombre que espera el servidor.
   const CAMPOS_DOCUMENTO = [
