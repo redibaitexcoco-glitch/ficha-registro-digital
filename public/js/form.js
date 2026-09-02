@@ -14,32 +14,46 @@
     const fechaTexto = hoy.toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
     fechaFirmaTexto.textContent = fechaTexto;
 
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      console.warn('Geolocalización no disponible en este navegador.');
+      return;
+    }
 
     navigator.geolocation.getCurrentPosition(
       async (posicion) => {
         try {
           const { latitude, longitude } = posicion.coords;
           const resp = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
+            { headers: { Accept: 'application/json' } }
           );
-          if (!resp.ok) return;
+          if (!resp.ok) {
+            console.warn('Nominatim respondió con error HTTP:', resp.status);
+            return;
+          }
           const datos = await resp.json();
           const direccion = datos.address || {};
           const municipio =
-            direccion.municipality || direccion.city || direccion.town || direccion.county || direccion.village;
-          const estado = direccion.state;
+            direccion.municipality ||
+            direccion.city ||
+            direccion.town ||
+            direccion.county ||
+            direccion.village ||
+            direccion.suburb;
+          const estado = direccion.state || direccion.state_district || direccion.region;
           if (municipio && estado) {
             fechaFirmaTexto.textContent = `${municipio}, ${estado} a ${fechaTexto}`;
+          } else {
+            console.warn('No se encontró municipio/estado en la respuesta de Nominatim:', direccion);
           }
         } catch (err) {
-          // Sin conexión al servicio de ubicación: se deja solo la fecha.
+          console.warn('Error al consultar el servicio de ubicación:', err);
         }
       },
-      () => {
-        // Permiso denegado o no disponible: se deja solo la fecha.
+      (err) => {
+        console.warn('Geolocalización denegada o falló:', err && err.message);
       },
-      { timeout: 5000 }
+      { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false }
     );
   }
 
