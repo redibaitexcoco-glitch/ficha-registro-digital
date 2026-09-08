@@ -19,14 +19,9 @@ const PROGRAMAS_VALIDOS = [
 ];
 
 const PLANTELES_VALIDOS = [
-  'Cacahoatán',
-  'Comitán',
-  'Mazatán',
-  'Motozintla',
-  'Pijijiapan',
-  'Tapachula [Ciencias de la Educación]',
-  'Tapachula [Sede]',
-  'Texcoco',
+  'Texcoco [Sede]',
+  'Ecatepec [Módulo]',
+  'San Felipe del Progreso [Módulo]',
 ];
 
 function limpiar(valor) {
