@@ -13,7 +13,14 @@ const PLANTELES_VALIDOS = [
   'San Felipe del Progreso [Módulo]',
 ];
 
-const SITUACIONES_VALIDAS = ['Inscrito', 'Baja', 'Baja temporal'];
+const SITUACIONES_VALIDAS = [
+  'Inscrito',
+  'Baja',
+  'Baja temporal',
+  'Concluido [Programa Académico]',
+  'En Proceso [Título o Grado]',
+  'Entregado [Título o Grado]',
+];
 
 function limpiar(valor) {
   if (typeof valor !== 'string') return valor;

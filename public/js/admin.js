@@ -80,6 +80,9 @@
             <option value="Inscrito" ${f.situacion === 'Inscrito' ? 'selected' : ''}>Inscrito</option>
             <option value="Baja" ${f.situacion === 'Baja' ? 'selected' : ''}>Baja</option>
             <option value="Baja temporal" ${f.situacion === 'Baja temporal' ? 'selected' : ''}>Baja temporal</option>
+            <option value="Concluido [Programa Académico]" ${f.situacion === 'Concluido [Programa Académico]' ? 'selected' : ''}>Concluido [Programa Académico]</option>
+            <option value="En Proceso [Título o Grado]" ${f.situacion === 'En Proceso [Título o Grado]' ? 'selected' : ''}>En Proceso [Título o Grado]</option>
+            <option value="Entregado [Título o Grado]" ${f.situacion === 'Entregado [Título o Grado]' ? 'selected' : ''}>Entregado [Título o Grado]</option>
           </select>
         </td>
         <td>${celdaDocumentos(f)}</td>

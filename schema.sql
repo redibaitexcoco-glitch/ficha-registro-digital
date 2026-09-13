@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS fichas_registro (
     acepto_conformidad      BOOLEAN NOT NULL DEFAULT FALSE,
     fecha_firma             DATE,
     capturado_por           VARCHAR(20) NOT NULL DEFAULT 'estudiante', -- 'estudiante' | 'personal'
-    situacion                VARCHAR(20) NOT NULL DEFAULT 'Inscrito', -- 'Inscrito' | 'Baja' | 'Baja temporal'
+    situacion                VARCHAR(50) NOT NULL DEFAULT 'Inscrito', -- 'Inscrito' | 'Baja' | 'Baja temporal' | 'Concluido [Programa Académico]' | 'En Proceso [Título o Grado]' | 'Entregado [Título o Grado]'
     revisado                BOOLEAN NOT NULL DEFAULT FALSE,
     revisado_por            VARCHAR(150),
     revisado_en             TIMESTAMPTZ,
@@ -62,7 +62,8 @@ CREATE TABLE IF NOT EXISTS fichas_registro (
 
 -- Migración para una base de datos ya existente (agrega columnas nuevas sin perder datos).
 -- Debe ir ANTES de los índices, para que las columnas ya existan cuando se indexan.
-ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS situacion VARCHAR(20) NOT NULL DEFAULT 'Inscrito';
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS situacion VARCHAR(50) NOT NULL DEFAULT 'Inscrito';
+ALTER TABLE fichas_registro ALTER COLUMN situacion TYPE VARCHAR(50);
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS drive_folder_id VARCHAR(100);
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_acta_nacimiento_id VARCHAR(100);
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS doc_curp_id VARCHAR(100);
