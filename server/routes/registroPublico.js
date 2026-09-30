@@ -22,6 +22,12 @@ const PLANTELES_VALIDOS = [
   'Texcoco [Sede]',
   'Ecatepec [Módulo]',
   'San Felipe del Progreso [Módulo]',
+  'Tapachula [Campus]',
+  'Cacahoatán',
+  'Comitán',
+  'Mazatán',
+  'Motozintla',
+  'Tapachula [Ciencias de la Educación]',
 ];
 
 function limpiar(valor) {
