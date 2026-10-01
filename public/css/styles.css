@@ -148,7 +148,7 @@ button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
 .mensaje.error { background: #fbe9e7; color: var(--rojo); border: 1px solid #f0bdb7; }
 
 /* --- Panel administrativo --- */
-.admin-wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px 60px; }
+.admin-wrap { max-width: 1400px; margin: 0; padding: 24px 16px 60px; }
 .admin-filtros { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
 .admin-filtros input { padding: 9px 12px; border: 1px solid var(--borde); border-radius: 8px; }
 .admin-filtros button {
