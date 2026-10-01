@@ -285,23 +285,6 @@ router.delete('/:id/matricula', async (req, res) => {
   }
 });
 
-// DELETE /api/fichas/:id/matricula - deshacer una matriculación hecha por error:
-// regresa la ficha a estado pendiente (sin tocar el registro del estudiante,
-// que SIASE elimina aparte en Servicios Escolares antes de llamar aquí).
-router.delete('/:id/matricula', async (req, res) => {
-  try {
-    const result = await pool.query(
-      'UPDATE fichas_registro SET matricula_asignada = NULL WHERE id = $1 RETURNING id',
-      [req.params.id]
-    );
-    if (!result.rows.length) return res.status(404).json({ error: 'No encontrado' });
-    return res.json({ ok: true });
-  } catch (err) {
-    console.error('Error al deshacer matricula:', err);
-    return res.status(500).json({ error: 'No se pudo deshacer la matrícula.' });
-  }
-});
-
 // DELETE /api/fichas/:id - eliminar un registro capturado
 router.delete('/:id', async (req, res) => {
   try {

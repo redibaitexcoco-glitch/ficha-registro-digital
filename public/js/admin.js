@@ -132,9 +132,12 @@
     }
 
     if (btn.dataset.action === 'matricular') {
-      const anio = prompt('Año de ingreso (ej. 2026):');
+      // Se proponen el año y el periodo actuales; el personal puede cambiarlos.
+      const hoy = new Date();
+      const periodoActual = String(Math.floor(hoy.getMonth() / 4) + 1);
+      const anio = prompt('Año de ingreso (ej. 2026):', String(hoy.getFullYear()));
       if (!anio) return;
-      const periodo = prompt('Periodo (1 = Ene-Abr, 2 = May-Ago, 3 = Sep-Dic):');
+      const periodo = prompt('Periodo (1 = Ene-Abr, 2 = May-Ago, 3 = Sep-Dic):', periodoActual);
       if (!periodo || !['1', '2', '3'].includes(periodo.trim())) {
         alert('El periodo debe ser 1, 2 o 3.');
         return;
