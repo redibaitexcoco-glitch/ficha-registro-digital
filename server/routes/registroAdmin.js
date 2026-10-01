@@ -8,15 +8,15 @@ const PROGRAMAS_VALIDOS = [
 ];
 
 const PLANTELES_VALIDOS = [
-  'Texcoco [Sede]',
-  'Ecatepec [Módulo]',
-  'San Felipe del Progreso [Módulo]',
-  'Tapachula [Campus]',
-  'Cacahoatán',
-  'Comitán',
-  'Mazatán',
-  'Motozintla',
-  'Tapachula [Ciencias de la Educación]',
+  'Red IBAI Texcoco',
+  'Módulo Ecatepec',
+  'Módulo San Felipe del Progreso',
+  'Red IBAI Tapachula',
+  'Red IBAI Cacahoatán',
+  'Red IBAI Comitán',
+  'Red IBAI Mazatán',
+  'Red IBAI Motozintla',
+  'Red IBAI Tapachula Ciencias de la Educación',
 ];
 
 const SITUACIONES_VALIDAS = [
