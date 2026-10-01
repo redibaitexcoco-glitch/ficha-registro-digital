@@ -54,7 +54,7 @@
 
     const resp = await fetch(`/api/fichas?${params.toString()}`);
     if (!resp.ok) {
-      tbody.innerHTML = '<tr><td colspan="11">Error al cargar el listado.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="12">Error al cargar el listado.</td></tr>';
       return;
     }
     const fichas = await resp.json();
@@ -63,7 +63,7 @@
 
   function render(fichas) {
     if (!fichas.length) {
-      tbody.innerHTML = '<tr><td colspan="11">Sin resultados.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="12">Sin resultados.</td></tr>';
       return;
     }
     tbody.innerHTML = fichas.map((f) => `
@@ -88,6 +88,11 @@
         <td>${celdaDocumentos(f)}</td>
         <td><span class="badge ${f.revisado ? 'si' : 'no'}">${f.revisado ? 'Revisado' : 'Pendiente'}</span></td>
         <td>
+          ${f.matricula_asignada
+            ? `<strong>${f.matricula_asignada}</strong>`
+            : `<button class="btn-mini" data-id="${f.id}" data-action="matricular">Asignar matrícula</button>`}
+        </td>
+        <td>
           <div class="celda-acciones">
             <button class="btn-mini btn-editar" data-id="${f.id}" data-action="editar">Editar</button>
             ${f.revisado ? '' : `<button class="btn-mini" data-id="${f.id}" data-action="revisar">Marcar revisado</button>`}
@@ -105,6 +110,34 @@
 
     if (btn.dataset.action === 'editar') {
       abrirModalEditar(id);
+      return;
+    }
+
+    if (btn.dataset.action === 'matricular') {
+      const anio = prompt('Año de ingreso (ej. 2026):');
+      if (!anio) return;
+      const periodo = prompt('Periodo (1 = Ene-Abr, 2 = May-Ago, 3 = Sep-Dic):');
+      if (!periodo || !['1', '2', '3'].includes(periodo.trim())) {
+        alert('El periodo debe ser 1, 2 o 3.');
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Matriculando...';
+      try {
+        const resp = await fetch(`/api/matricular/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ anio: anio.trim(), periodo: periodo.trim() }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'No se pudo matricular');
+        alert(`Estudiante matriculado con éxito.\nMatrícula asignada: ${data.matricula}`);
+        cargar();
+      } catch (err) {
+        alert('Error: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = 'Asignar matrícula';
+      }
       return;
     }
 
