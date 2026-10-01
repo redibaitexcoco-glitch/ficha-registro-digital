@@ -248,6 +248,26 @@ router.patch('/:id/situacion', async (req, res) => {
   }
 });
 
+// PATCH /api/fichas/:id/matricula - guarda la matrícula asignada en Servicios Escolares
+// (la crea y calcula SIASE; aquí solo se registra el resultado para no matricular dos veces).
+router.patch('/:id/matricula', async (req, res) => {
+  const { matricula_asignada } = req.body || {};
+  if (!limpiar(matricula_asignada)) {
+    return res.status(400).json({ error: 'La matrícula asignada es obligatoria.' });
+  }
+  try {
+    const result = await pool.query(
+      'UPDATE fichas_registro SET matricula_asignada = $1 WHERE id = $2 RETURNING id',
+      [matricula_asignada.trim().toUpperCase(), req.params.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'No encontrado' });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('Error al guardar matricula asignada:', err);
+    return res.status(500).json({ error: 'No se pudo guardar la matrícula.' });
+  }
+});
+
 // DELETE /api/fichas/:id - eliminar un registro capturado
 router.delete('/:id', async (req, res) => {
   try {

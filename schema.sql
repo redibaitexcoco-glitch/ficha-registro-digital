@@ -87,3 +87,6 @@ CREATE INDEX IF NOT EXISTS idx_fichas_situacion ON fichas_registro (situacion);
 -- ALTER TABLE fichas_registro DROP COLUMN IF EXISTS matricula;
 -- ALTER TABLE fichas_registro DROP COLUMN IF EXISTS periodo_por_cursar;
 -- ALTER TABLE fichas_registro DROP COLUMN IF EXISTS identificacion_oficial;
+
+-- Matriculación: guarda la matrícula asignada en Servicios Escolares (si ya se matriculó).
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS matricula_asignada VARCHAR(20);
