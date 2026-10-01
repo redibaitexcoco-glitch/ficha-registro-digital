@@ -89,7 +89,7 @@
         <td><span class="badge ${f.revisado ? 'si' : 'no'}">${f.revisado ? 'Revisado' : 'Pendiente'}</span></td>
         <td>
           ${f.matricula_asignada
-            ? `<strong>${f.matricula_asignada}</strong>`
+            ? `<strong>${f.matricula_asignada}</strong><br><button class="btn-mini btn-eliminar" data-id="${f.id}" data-action="deshacer-matricula" style="margin-top:4px">Deshacer</button>`
             : `<button class="btn-mini" data-id="${f.id}" data-action="matricular">Asignar matrícula</button>`}
         </td>
         <td>
@@ -110,6 +110,24 @@
 
     if (btn.dataset.action === 'editar') {
       abrirModalEditar(id);
+      return;
+    }
+
+    if (btn.dataset.action === 'deshacer-matricula') {
+      const confirmar = confirm('¿Deshacer esta matriculación? Se eliminará el estudiante creado en Servicios Escolares y la ficha regresará a pendiente. Esta acción no se puede deshacer.');
+      if (!confirmar) return;
+      btn.disabled = true;
+      btn.textContent = 'Deshaciendo...';
+      try {
+        const resp = await fetch(`/api/matricular/${id}`, { method: 'DELETE' });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'No se pudo deshacer la matriculación');
+        cargar();
+      } catch (err) {
+        alert('Error: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = 'Deshacer';
+      }
       return;
     }
 
