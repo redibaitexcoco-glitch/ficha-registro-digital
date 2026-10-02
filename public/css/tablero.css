@@ -1,0 +1,50 @@
+/* Tablero de Matriculación — mismo diseño que Servicios Escolares.
+   Solo aplica al panel administrativo (body.admin-tablero); el formulario público no cambia.
+   Paleta: azul marino #1F3A5F · verde azulado #0f5f6c · dorado #b8893f/#d4b07a · guinda #691C32 */
+body.admin-tablero { background: #e3e9ef; color: #0b1520; margin: 0; }
+.admin-tablero .admin-wrap { max-width: none; padding: 20px 22px; }
+
+.admin-tablero .tb-hero {
+  background: linear-gradient(120deg, #142a46 0%, #0b4a55 100%);
+  border-radius: 14px; padding: 20px 24px; margin-bottom: 18px; position: relative; overflow: hidden;
+}
+.admin-tablero .tb-hero::after { content: ""; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; background: rgba(212,176,122,0.18); }
+.admin-tablero .tb-hero small { position: relative; z-index: 1; color: #e2c08c; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.admin-tablero .tb-hero h1 { position: relative; z-index: 1; margin: 4px 0 6px; color: #ffffff; font-size: 1.5rem; font-weight: 700; }
+.admin-tablero .tb-hero p { position: relative; z-index: 1; margin: 0; color: #ffffff; font-weight: 500; font-size: 0.95rem; max-width: 560px; }
+
+.admin-tablero .tb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+.admin-tablero .tb-card {
+  all: unset; box-sizing: border-box; cursor: pointer; position: relative;
+  background: #ffffff; border: 1px solid #c3ccd5; border-radius: 14px;
+  padding: 18px 18px 18px 22px; display: flex; flex-direction: column; gap: 6px;
+  box-shadow: 0 1px 3px rgba(11,21,32,0.08); transition: transform .15s, box-shadow .15s;
+  font-family: inherit; text-align: left; color: #0b1520;
+}
+.admin-tablero .tb-card:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(11,21,32,0.16); }
+.admin-tablero .tb-card:focus-visible { outline: 3px solid #b8893f; }
+.admin-tablero .tb-barra { position: absolute; left: 0; top: 12px; bottom: 12px; width: 5px; border-radius: 0 4px 4px 0; }
+.admin-tablero .tb-icono { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.admin-tablero .tb-icono svg { width: 22px; height: 22px; stroke: #ffffff; }
+.admin-tablero .tb-card b { font-size: 1rem; font-weight: 700; color: #0b1520; }
+.admin-tablero .tb-desc { font-size: 0.88rem; color: #26333f; font-weight: 500; line-height: 1.45; }
+.admin-tablero .tb-indicador { align-self: flex-start; margin-top: 4px; font-size: 0.78rem; font-weight: 700; color: #ffffff; padding: 4px 10px; border-radius: 20px; }
+.admin-tablero .tb-c1 .tb-icono, .admin-tablero .tb-c1 .tb-barra { background: #1F3A5F; }
+.admin-tablero .tb-c2 .tb-icono, .admin-tablero .tb-c2 .tb-barra { background: #0f5f6c; }
+.admin-tablero .tb-c3 .tb-icono, .admin-tablero .tb-c3 .tb-barra { background: #8f6526; }
+.admin-tablero .tb-c4 .tb-icono, .admin-tablero .tb-c4 .tb-barra { background: #691C32; }
+.admin-tablero .tb-ambar { background: #a0610a; } .admin-tablero .tb-verde { background: #0f5f6c; } .admin-tablero .tb-guinda { background: #691C32; }
+
+.admin-tablero .tb-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.admin-tablero .tb-nav button {
+  all: unset; cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: 600;
+  padding: 7px 14px; border-radius: 20px; background: #ffffff; border: 1px solid #b9c3cc; color: #0b1520;
+}
+.admin-tablero .tb-nav button:hover { border-color: #1F3A5F; }
+.admin-tablero .tb-nav button.activo { background: #1F3A5F; color: #ffffff; border-color: #1F3A5F; }
+.admin-tablero .tb-nav button.volver { background: transparent; border-color: transparent; color: #0b4a55; font-weight: 700; }
+.admin-tablero .tb-nav button:focus-visible { outline: 3px solid #b8893f; }
+
+.admin-tablero .tb-caja { background: #ffffff; border: 1px solid #c3ccd5; border-radius: 14px; padding: 18px; overflow-x: auto; }
+.admin-tablero .tb-caja > h2 { margin: 0 0 14px; color: #142a46; font-size: 1.1rem; font-weight: 700; padding-bottom: 8px; border-bottom: 2px solid #b8893f; }
+.admin-tablero .tb-oculto { display: none !important; }

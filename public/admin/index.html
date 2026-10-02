@@ -5,14 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fichas de Registro - Panel administrativo</title>
 <link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="../css/tablero.css">
 </head>
-<body>
-<header class="topbar">
-  <h1>Fichas de Registro recibidas</h1>
-  <p>IES Red IBAI Connect - Servicios Escolares</p>
-</header>
-
+<body class="admin-tablero">
 <main class="admin-wrap">
+  <!-- Tablero de Matriculación: un recuadro por cada sección (se agregan en js/tablero.js) -->
+  <div id="vistaTablero">
+    <div class="tb-hero">
+      <small>Ingreso</small>
+      <h1>Matriculación</h1>
+      <p>Fichas de registro de aspirantes, revisión de documentos y asignación de matrícula.</p>
+    </div>
+    <div class="tb-grid" id="tableroRecuadros"></div>
+  </div>
+
+  <!-- Sección: Fichas de Registro recibidas -->
+  <div id="seccion-fichas" class="tb-seccion tb-oculto">
+    <div class="tb-nav" data-nav></div>
+    <div class="tb-caja">
+      <h2>Fichas de Registro recibidas</h2>
   <div class="admin-filtros">
     <input type="text" id="qInput" placeholder="Buscar por matrícula, CURP o nombre...">
     <input type="date" id="desdeInput">
@@ -71,6 +82,8 @@
     </thead>
     <tbody id="tbody"></tbody>
   </table>
+    </div>
+  </div>
 </main>
 
 <div id="modalEditar" class="modal-overlay" hidden>
@@ -238,6 +251,7 @@
   </div>
 </div>
 
+<script src="../js/tablero.js"></script>
 <script src="../js/admin.js"></script>
 </body>
 </html>
