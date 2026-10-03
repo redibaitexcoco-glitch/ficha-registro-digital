@@ -48,3 +48,52 @@ body.admin-tablero { background: #e3e9ef; color: #0b1520; margin: 0; }
 .admin-tablero .tb-caja { background: #ffffff; border: 1px solid #c3ccd5; border-radius: 14px; padding: 18px; overflow-x: auto; }
 .admin-tablero .tb-caja > h2 { margin: 0 0 14px; color: #142a46; font-size: 1.1rem; font-weight: 700; padding-bottom: 8px; border-bottom: 2px solid #b8893f; }
 .admin-tablero .tb-oculto { display: none !important; }
+
+/* ---- Fichas de Registro recibidas: tarjetas ---- */
+.admin-tablero .tb-caja table { border: none; }
+.admin-tablero .tb-caja thead { display: none; }
+.admin-tablero .ficha-tr > td { padding: 0 0 10px; border: none; background: transparent; }
+.admin-tablero .ficha-card { border: 1px solid #c3ccd5; border-left: 5px solid #1b7f4b; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; background: #ffffff; }
+.admin-tablero .ficha-card.por-revisar { border-left-color: #a0610a; }
+.admin-tablero .ficha-l1 { display: flex; gap: 12px; align-items: center; }
+.admin-tablero .ficha-avatar { width: 40px; height: 40px; border-radius: 50%; background: #d4b07a; color: #13202f; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.admin-tablero .ficha-nombre { flex: 1; min-width: 0; }
+.admin-tablero .ficha-nombre b { display: block; font-size: 0.95rem; color: #0b1520; }
+.admin-tablero .ficha-nombre small { display: block; font-size: 0.78rem; color: #26333f; margin-top: 2px; }
+.admin-tablero .ficha-matricula { text-align: right; flex-shrink: 0; }
+.admin-tablero .ficha-matricula small { display: block; font-size: 0.66rem; font-weight: 700; color: #26333f; letter-spacing: 0.04em; }
+.admin-tablero .ficha-matricula b { font-family: ui-monospace, Menlo, monospace; font-size: 1rem; color: #142a46; }
+.admin-tablero .btn-mini.btn-principal { background: #1F3A5F; color: #ffffff; border: none; border-radius: 9px; padding: 8px 12px; font-weight: 700; cursor: pointer; }
+.admin-tablero .btn-mini.btn-revisar { background: #ffffff; color: #8a5a12; border: 1px solid #a0610a; border-radius: 9px; padding: 6px 10px; font-weight: 700; cursor: pointer; }
+.admin-tablero .ficha-l2 { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding-left: 52px; }
+.admin-tablero .ficha-estado { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.admin-tablero .ficha-estado select { padding: 6px 8px; border-radius: 8px; border: 1px solid #b9c3cc; font-size: 0.84rem; max-width: 240px; }
+.admin-tablero .ficha-chip { font-size: 0.74rem; font-weight: 700; color: #ffffff; padding: 3px 9px; border-radius: 10px; }
+.admin-tablero .ficha-chip.verde { background: #1b7f4b; }
+.admin-tablero .ficha-docs { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; flex: 1; min-width: 0; }
+.admin-tablero .ficha-docs-cuenta { font-size: 0.76rem; font-weight: 700; color: #ffffff; background: #a0242f; padding: 3px 9px; border-radius: 10px; white-space: nowrap; }
+.admin-tablero .ficha-docs-cuenta.completo { background: #1b7f4b; }
+.admin-tablero .ficha-docs .celda-documentos { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+.admin-tablero .doc-chip { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 8px; }
+.admin-tablero .doc-chip.doc-ok { background: #e1f0e9; color: #0F6E56; }
+.admin-tablero .doc-chip.doc-ok::before { content: "✓ "; }
+.admin-tablero .doc-chip.doc-pendiente { background: #fbeaea; color: #a0242f; }
+.admin-tablero .doc-chip.doc-pendiente::before { content: "✗ "; }
+.admin-tablero .doc-carpeta { font-size: 0.76rem; font-weight: 700; color: #0b4a55; }
+.admin-tablero .ficha-menu { position: relative; margin-left: auto; }
+.admin-tablero .ficha-menu summary { list-style: none; cursor: pointer; width: 32px; height: 30px; border-radius: 8px; border: 1px solid #c3ccd5; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #1F3A5F; background: #ffffff; }
+.admin-tablero .ficha-menu summary::-webkit-details-marker { display: none; }
+.admin-tablero .ficha-menu > div { position: absolute; right: 0; top: 34px; z-index: 20; min-width: 190px; background: #ffffff; border: 1px solid #c3ccd5; border-radius: 10px; box-shadow: 0 12px 26px rgba(11,21,32,0.18); overflow: hidden; display: flex; flex-direction: column; }
+.admin-tablero .ficha-menu > div .btn-mini { all: unset; cursor: pointer; padding: 10px 14px; font-size: 0.88rem; color: #0b1520; font-family: inherit; }
+.admin-tablero .ficha-menu > div .btn-mini:hover { background: #eef2f6; }
+.admin-tablero .ficha-menu > div .btn-mini.peligro { color: #a0242f; font-weight: 700; border-top: 1px solid #eef2f6; }
+.admin-tablero .fichas-rapidos { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.admin-tablero .nota-fichas { font-size: 0.85rem; color: #26333f; }
+.admin-tablero .fichas-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.admin-tablero .fichas-chips button { cursor: pointer; font-family: inherit; font-size: 0.82rem; font-weight: 700; padding: 6px 12px; border-radius: 18px; border: 1px solid #b9c3cc; background: #ffffff; color: #0b1520; }
+.admin-tablero .fichas-chips button.activo { background: #1F3A5F; color: #ffffff; border-color: #1F3A5F; }
+.admin-tablero .admin-filtros { background: #f7f9fb; border: 1px solid #e3e9ef; border-radius: 12px; padding: 10px; }
+.admin-tablero .admin-filtros input, .admin-tablero .admin-filtros select { border-radius: 8px; }
+.admin-tablero .fichas-vacio { padding: 16px; color: #26333f; }
+@media (max-width: 640px) { .admin-tablero .ficha-l2 { padding-left: 0; } .admin-tablero .ficha-l1 { flex-wrap: wrap; } }
+.admin-tablero .ficha-docs .celda-documentos { max-width: none !important; width: auto !important; display: flex !important; flex-wrap: wrap; }

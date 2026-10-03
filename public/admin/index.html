@@ -24,6 +24,14 @@
     <div class="tb-nav" data-nav></div>
     <div class="tb-caja">
       <h2>Fichas de Registro recibidas</h2>
+  <div class="fichas-rapidos">
+    <span class="nota-fichas" id="fichasContador"></span>
+    <div class="fichas-chips" id="fichasChips">
+      <button type="button" class="activo" data-revisado="">Todas</button>
+      <button type="button" data-revisado="false">Pendientes de revisar</button>
+      <button type="button" data-revisado="true">Revisadas</button>
+    </div>
+  </div>
   <div class="admin-filtros">
     <input type="text" id="qInput" placeholder="Buscar por matrícula, CURP o nombre...">
     <input type="date" id="desdeInput">
@@ -255,5 +263,18 @@
 
 <script src="../js/tablero.js"></script>
 <script src="../js/admin.js"></script>
+<script>
+  // Botones rápidos de revisión: usan el mismo filtro "revisado" del formulario
+  document.querySelectorAll('#fichasChips button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#fichasChips button').forEach(x => x.classList.toggle('activo', x === b));
+    const sel = document.getElementById('revisadoInput');
+    sel.value = b.dataset.revisado;
+    const buscar = [...document.querySelectorAll('.admin-filtros button')].find(x => /buscar/i.test(x.textContent));
+    if (buscar) buscar.click();
+  }));
+  document.getElementById('revisadoInput').addEventListener('change', e => {
+    document.querySelectorAll('#fichasChips button').forEach(x => x.classList.toggle('activo', x.dataset.revisado === e.target.value));
+  });
+</script>
 </body>
 </html>

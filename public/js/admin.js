@@ -62,46 +62,58 @@
   }
 
   function render(fichas) {
+    const contador = document.getElementById('fichasContador');
+    if (contador) {
+      const pendientes = fichas.filter(f => !f.revisado).length;
+      const sinMatricula = fichas.filter(f => !f.matricula_asignada).length;
+      contador.textContent = `${fichas.length} ficha${fichas.length === 1 ? '' : 's'} · ${pendientes} pendiente${pendientes === 1 ? '' : 's'} de revisar · ${sinMatricula} sin matrícula`;
+    }
     if (!fichas.length) {
-      tbody.innerHTML = '<tr><td colspan="12">Sin resultados.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="12"><p class="fichas-vacio">Sin resultados con esos filtros.</p></td></tr>';
       return;
     }
-    tbody.innerHTML = fichas.map((f) => `
-      <tr>
-        <td>${f.id}</td>
-        <td>${new Date(f.created_at).toLocaleDateString('es-MX')}</td>
-        <td>${f.plantel || '-'}</td>
-        <td>${[f.primer_apellido, f.segundo_apellido, f.nombres].filter(Boolean).join(' ')}</td>
-        <td>${f.curp || '-'}</td>
-        <td>${f.programa_educativo || '-'}</td>
-        <td>${f.capturado_por === 'personal' ? 'Personal' : 'Estudiante'}</td>
-        <td>
-          <select class="select-situacion" data-id="${f.id}">
-            <option value="Inscrito" ${f.situacion === 'Inscrito' ? 'selected' : ''}>Inscrito</option>
-            <option value="Baja" ${f.situacion === 'Baja' ? 'selected' : ''}>Baja</option>
-            <option value="Baja temporal" ${f.situacion === 'Baja temporal' ? 'selected' : ''}>Baja temporal</option>
-            <option value="Concluido [Programa Académico]" ${f.situacion === 'Concluido [Programa Académico]' ? 'selected' : ''}>Concluido [Programa Académico]</option>
-            <option value="En Proceso [Título o Grado]" ${f.situacion === 'En Proceso [Título o Grado]' ? 'selected' : ''}>En Proceso [Título o Grado]</option>
-            <option value="Entregado [Título o Grado]" ${f.situacion === 'Entregado [Título o Grado]' ? 'selected' : ''}>Entregado [Título o Grado]</option>
-          </select>
-        </td>
-        <td>${celdaDocumentos(f)}</td>
-        <td><span class="badge ${f.revisado ? 'si' : 'no'}">${f.revisado ? 'Revisado' : 'Pendiente'}</span></td>
-        <td>
-          ${f.matricula_asignada
-            ? `<strong>${f.matricula_asignada}</strong><br><button class="btn-mini btn-eliminar" data-id="${f.id}" data-action="deshacer-matricula" style="margin-top:4px">Deshacer</button>`
-            : `<button class="btn-mini" data-id="${f.id}" data-action="matricular">Asignar matrícula</button>`}
-        </td>
-        <td>
-          <div class="celda-acciones">
-            <button class="btn-mini btn-editar" data-id="${f.id}" data-action="editar">Editar</button>
-            ${f.revisado ? '' : `<button class="btn-mini" data-id="${f.id}" data-action="revisar">Marcar revisado</button>`}
-            <button class="btn-mini btn-eliminar" data-id="${f.id}" data-action="eliminar">Eliminar</button>
+    const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const opcionesSituacion = ['Inscrito', 'Baja', 'Baja temporal', 'Concluido [Programa Académico]', 'En Proceso [Título o Grado]', 'Entregado [Título o Grado]'];
+    tbody.innerHTML = fichas.map((f) => {
+      const nombre = [f.primer_apellido, f.segundo_apellido, f.nombres].filter(Boolean).join(' ');
+      const ini = ((f.nombres || '').charAt(0) + (f.primer_apellido || '').charAt(0)).toUpperCase();
+      const cargados = DOCUMENTOS_CHECKLIST.filter(({ campo }) => Boolean(f[campo])).length;
+      const programa = String(f.programa_educativo || '-').replace(' (No escolarizado)', '');
+      return `<tr class="ficha-tr"><td colspan="12">
+        <div class="ficha-card ${f.revisado ? '' : 'por-revisar'}">
+          <div class="ficha-l1">
+            <span class="ficha-avatar">${esc(ini)}</span>
+            <span class="ficha-nombre"><b>${esc(nombre)}</b>
+              <small>${esc(f.curp || 'Sin CURP')} · ${esc(f.plantel || '-')} · ${esc(programa)}</small>
+              <small>Recibida el ${new Date(f.created_at).toLocaleDateString('es-MX')} · capturada por ${f.capturado_por === 'personal' ? 'personal' : 'el estudiante'}</small></span>
+            <span class="ficha-matricula">
+              ${f.matricula_asignada
+                ? `<small>MATRÍCULA</small><b>${esc(f.matricula_asignada)}</b>`
+                : `<button class="btn-mini btn-principal" data-id="${f.id}" data-action="matricular">Asignar matrícula</button>`}
+            </span>
           </div>
-        </td>
-      </tr>
-    `).join('');
+          <div class="ficha-l2">
+            <span class="ficha-estado">
+              ${f.revisado ? '<span class="ficha-chip verde">Revisada</span>' : `<button class="btn-mini btn-revisar" data-id="${f.id}" data-action="revisar">Marcar revisada</button>`}
+              <select class="select-situacion" data-id="${f.id}" aria-label="Situación">
+                ${opcionesSituacion.map(o => `<option value="${esc(o)}" ${f.situacion === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+              </select>
+            </span>
+            <span class="ficha-docs"><span class="ficha-docs-cuenta ${cargados === DOCUMENTOS_CHECKLIST.length ? 'completo' : ''}">${cargados}/${DOCUMENTOS_CHECKLIST.length} documentos</span>${celdaDocumentos(f)}</span>
+            <details class="ficha-menu">
+              <summary aria-label="Más acciones">⋯</summary>
+              <div>
+                <button class="btn-mini" data-id="${f.id}" data-action="editar">Editar ficha</button>
+                ${f.matricula_asignada ? `<button class="btn-mini peligro" data-id="${f.id}" data-action="deshacer-matricula">Deshacer matrícula…</button>` : ''}
+                <button class="btn-mini peligro" data-id="${f.id}" data-action="eliminar">Eliminar ficha…</button>
+              </div>
+            </details>
+          </div>
+        </div>
+      </td></tr>`;
+    }).join('');
   }
+
 
   tbody.addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-id]');
@@ -312,3 +324,7 @@
   });
   cargar();
 })();
+
+document.addEventListener('click', (e) => {
+  document.querySelectorAll('.ficha-menu[open]').forEach(d => { if (!d.contains(e.target) || e.target.closest('button')) d.removeAttribute('open'); });
+});
