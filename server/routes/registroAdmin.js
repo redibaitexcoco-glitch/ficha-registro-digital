@@ -16,6 +16,7 @@ const PLANTELES_VALIDOS = [
   'Red IBAI Comitán',
   'Red IBAI Mazatán',
   'Red IBAI Motozintla',
+  'Red IBAI Pijijiapan',
   'Red IBAI Tapachula Ciencias de la Educación',
 ];
 
