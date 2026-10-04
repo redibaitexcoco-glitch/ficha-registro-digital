@@ -9,6 +9,8 @@ const registroAdmin = require('./routes/registroAdmin');
 const documentos = require('./routes/documentos');
 
 const app = express();
+// tramites.redibaiconnect.org abre directamente el selector de trámites
+app.get('/', (req, res, next) => (req.hostname.startsWith('tramites.') ? res.redirect('/tramites/') : next()));
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
