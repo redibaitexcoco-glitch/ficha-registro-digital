@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inscripción - IES Red IBAI Connect</title>
+<link rel="stylesheet" href="css/wizard.css">
+</head>
+<body>
+
+<header class="encabezado">
+  <div class="encabezado-interior">
+    <div class="encabezado-fila">
+      <a href="index.html">← Cambiar trámite</a>
+      <span class="institucion">IES Red IBAI Connect · Servicios Escolares</span>
+    </div>
+    <div class="titulo-fila">
+      <h1>Inscripción</h1>
+      <span class="pastilla">Nuevo ingreso</span>
+    </div>
+    <div class="progreso-movil" aria-hidden="true">
+      <div class="fila-avance"><span id="movilTitulo"></span><span id="movilConteo"></span></div>
+      <div class="barra"><div id="movilBarra" style="width:0%"></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="pagina">
+
+  <nav class="pasos-nav" aria-label="Pasos del trámite">
+    <ol id="listaPasos"></ol>
+  </nav>
+
+  <form id="formFicha" class="panel" novalidate>
+    <input type="hidden" name="capturado_por" value="estudiante">
+
+    <div id="zonaFormulario" style="display:contents">
+
+      <div class="paso-cabeza">
+        <p class="eyebrow" id="eyebrow"></p>
+        <h2 id="tituloPaso" tabindex="-1"></h2>
+        <p id="descripcionPaso"></p>
+      </div>
+
+      <!-- Paso: Plantel y programa -->
+      <section class="paso" data-paso="plantel" data-titulo="Plantel y programa"
+               data-descripcion="Indica en qué plantel te inscribes y qué programa vas a cursar.">
+        <div class="aviso-formato">
+          <strong>Aviso:</strong> completa los campos obligatorios marcados con asterisco (*). El formulario convierte el texto a MAYÚSCULAS SIN ACENTOS automáticamente. La información proporcionada tiene carácter de declaración veraz y se utilizará exclusivamente para integrar tu expediente académico institucional.
+        </div>
+        <div class="rejilla ancha">
+          <div class="campo">
+            <label for="plantel">Plantel que realiza la inscripción *</label>
+            <select id="plantel" name="plantel" required>
+              <option value="">Selecciona un plantel</option>
+              <option value="Red IBAI Texcoco">Red IBAI Texcoco</option>
+              <option value="Módulo Ecatepec">Módulo Ecatepec</option>
+              <option value="Módulo San Felipe del Progreso">Módulo San Felipe del Progreso</option>
+              <option value="Red IBAI Tapachula">Red IBAI Tapachula</option>
+              <option value="Red IBAI Cacahoatán">Red IBAI Cacahoatán</option>
+              <option value="Red IBAI Comitán">Red IBAI Comitán</option>
+              <option value="Red IBAI Mazatán">Red IBAI Mazatán</option>
+              <option value="Red IBAI Motozintla">Red IBAI Motozintla</option>
+              <option value="Red IBAI Pijijiapan">Red IBAI Pijijiapan</option>
+              <option value="Red IBAI Tapachula Ciencias de la Educación">Red IBAI Tapachula Ciencias de la Educación</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="programa_educativo">Nombre del programa educativo a cursar</label>
+            <select id="programa_educativo" name="programa_educativo">
+              <option value="">Selecciona un programa</option>
+              <option value="Maestría en Educación (No escolarizado)">Maestría en Educación (No escolarizado)</option>
+              <option value="Doctorado en Educación (No escolarizado)">Doctorado en Educación (No escolarizado)</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Paso: Datos del alumno -->
+      <section class="paso" data-paso="alumno" data-titulo="Datos del alumno"
+               data-descripcion="Escribe tus datos como aparecen en tu CURP." hidden>
+        <div class="rejilla">
+          <div class="campo">
+            <label for="primer_apellido">Primer apellido *</label>
+            <input type="text" id="primer_apellido" name="primer_apellido" autocomplete="family-name" required>
+          </div>
+          <div class="campo">
+            <label for="segundo_apellido">Segundo apellido *</label>
+            <input type="text" id="segundo_apellido" name="segundo_apellido" required>
+          </div>
+          <div class="campo">
+            <label for="nombres">Nombre(s) *</label>
+            <input type="text" id="nombres" name="nombres" autocomplete="given-name" required>
+          </div>
+        </div>
+        <div class="rejilla">
+          <div class="campo">
+            <label for="curp">CURP *</label>
+            <input type="text" id="curp" name="curp" maxlength="18" autocapitalize="characters" spellcheck="false" required>
+            <span class="ayuda" id="ayudaCurp">18 caracteres.</span>
+            <p class="aviso-suave" id="avisoCurp" hidden>El formato de la CURP no parece válido. Revísala contra tu documento.</p>
+          </div>
+          <div class="campo">
+            <label for="fecha_nacimiento">Fecha de nacimiento</label>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
+            <span class="ayuda" id="ayudaFecha">Se propone con tu CURP; corrígela si hace falta.</span>
+          </div>
+          <div class="campo">
+            <label for="edad">Edad</label>
+            <input type="number" id="edad" name="edad" min="0" max="120" readonly placeholder="Automática">
+            <span class="ayuda">Se calcula con tu fecha de nacimiento.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Paso: Domicilio y contacto -->
+      <section class="paso" data-paso="domicilio" data-titulo="Domicilio y contacto"
+               data-descripcion="Tu domicilio actual y los datos para localizarte." hidden>
+        <div class="rejilla">
+          <div class="campo">
+            <label for="calle">Calle</label>
+            <input type="text" id="calle" name="calle" autocomplete="address-line1">
+          </div>
+          <div class="campo">
+            <label for="no_ext">No. Ext.</label>
+            <input type="text" id="no_ext" name="no_ext">
+          </div>
+          <div class="campo">
+            <label for="no_int">No. Int.</label>
+            <input type="text" id="no_int" name="no_int">
+          </div>
+        </div>
+        <div class="rejilla">
+          <div class="campo">
+            <label for="colonia">Colonia</label>
+            <input type="text" id="colonia" name="colonia">
+          </div>
+          <div class="campo">
+            <label for="cp">C.P.</label>
+            <input type="text" id="cp" name="cp" maxlength="5" inputmode="numeric" autocomplete="postal-code">
+          </div>
+          <div class="campo">
+            <label for="localidad">Localidad</label>
+            <input type="text" id="localidad" name="localidad">
+          </div>
+        </div>
+        <div class="rejilla ancha">
+          <div class="campo">
+            <label for="municipio">Municipio / Alcaldía</label>
+            <input type="text" id="municipio" name="municipio">
+          </div>
+          <div class="campo">
+            <label for="entidad_federativa">Entidad federativa</label>
+            <input type="text" id="entidad_federativa" name="entidad_federativa">
+          </div>
+        </div>
+        <div class="rejilla">
+          <div class="campo">
+            <label for="tel_casa">Tel. casa</label>
+            <input type="tel" id="tel_casa" name="tel_casa" autocomplete="tel">
+          </div>
+          <div class="campo">
+            <label for="tel_celular">Tel. celular *</label>
+            <input type="tel" id="tel_celular" name="tel_celular" autocomplete="tel" required>
+          </div>
+          <div class="campo">
+            <label for="correo_electronico">Correo electrónico *</label>
+            <input type="email" id="correo_electronico" name="correo_electronico" autocomplete="email" required>
+          </div>
+        </div>
+      </section>
+
+      <!-- Paso: Padre o tutor (solo menores de 21 años) -->
+      <section class="paso" data-paso="tutor" data-titulo="Padre o tutor" data-nota="Solo menores de 21 años"
+               data-descripcion="Exclusivo para estudiantes menores de 21 años. Si eres mayor de edad, continúa sin llenarlo." hidden>
+        <div class="rejilla">
+          <div class="campo">
+            <label for="tutor_primer_apellido">Primer apellido <span data-obligatorio-menor>*</span></label>
+            <input type="text" id="tutor_primer_apellido" name="tutor_primer_apellido">
+          </div>
+          <div class="campo">
+            <label for="tutor_segundo_apellido">Segundo apellido</label>
+            <input type="text" id="tutor_segundo_apellido" name="tutor_segundo_apellido">
+          </div>
+          <div class="campo">
+            <label for="tutor_nombres">Nombre(s) <span data-obligatorio-menor>*</span></label>
+            <input type="text" id="tutor_nombres" name="tutor_nombres">
+          </div>
+        </div>
+        <div class="rejilla ancha">
+          <div class="campo">
+            <label for="tutor_ocupacion">Ocupación</label>
+            <input type="text" id="tutor_ocupacion" name="tutor_ocupacion">
+          </div>
+          <div class="campo">
+            <label for="tutor_telefono">Teléfono de contacto</label>
+            <input type="tel" id="tutor_telefono" name="tutor_telefono">
+          </div>
+        </div>
+      </section>
+
+      <!-- Paso: Antecedentes académicos -->
+      <section class="paso" data-paso="antecedentes" data-titulo="Antecedentes académicos"
+               data-descripcion="Dónde cursaste tu último grado de estudios." hidden>
+        <div class="rejilla ancha">
+          <div class="campo">
+            <label for="institucion_procedencia">Institución donde cursó su último grado de estudios *</label>
+            <input type="text" id="institucion_procedencia" name="institucion_procedencia" required>
+          </div>
+          <div class="campo">
+            <label for="promedio_ultimo_grado">Promedio del último grado de estudios</label>
+            <input type="number" id="promedio_ultimo_grado" name="promedio_ultimo_grado" min="0" max="10" step="0.1" inputmode="decimal">
+          </div>
+        </div>
+      </section>
+
+      <!-- Paso: Documentos -->
+      <section class="paso" data-paso="documentos" data-titulo="Documentos"
+               data-descripcion="Adjunta cada documento en PDF (la fotografía puede ser PDF, JPG o PNG), legible y de máximo 5 MB por archivo." hidden>
+        <div class="documento">
+          <label for="doc_acta" class="etiqueta">Acta de nacimiento</label>
+          <input type="file" id="doc_acta" name="doc_acta" accept="application/pdf">
+          <span class="estado-archivo">Ningún archivo seleccionado</span>
+        </div>
+        <div class="documento">
+          <label for="doc_curp_archivo" class="etiqueta">CURP</label>
+          <input type="file" id="doc_curp_archivo" name="doc_curp_archivo" accept="application/pdf">
+          <span class="estado-archivo">Ningún archivo seleccionado</span>
+        </div>
+        <div class="documento">
+          <label for="doc_ine" class="etiqueta">INE</label>
+          <input type="file" id="doc_ine" name="doc_ine" accept="application/pdf">
+          <span class="estado-archivo">Ningún archivo seleccionado</span>
+        </div>
+        <fieldset class="grupo-documento">
+          <legend>Último grado de estudios</legend>
+          <div class="documento">
+            <label for="doc_certificado" class="etiqueta">Certificado de estudios</label>
+            <input type="file" id="doc_certificado" name="doc_certificado" accept="application/pdf">
+            <span class="estado-archivo">Ningún archivo seleccionado</span>
+          </div>
+          <div class="documento">
+            <label for="doc_titulo" class="etiqueta">Título</label>
+            <input type="file" id="doc_titulo" name="doc_titulo" accept="application/pdf">
+            <span class="estado-archivo">Ningún archivo seleccionado</span>
+          </div>
+          <div class="documento">
+            <label for="doc_cedula" class="etiqueta">Cédula Profesional</label>
+            <input type="file" id="doc_cedula" name="doc_cedula" accept="application/pdf">
+            <span class="estado-archivo">Ningún archivo seleccionado</span>
+          </div>
+        </fieldset>
+        <div class="documento">
+          <label for="doc_foto" class="etiqueta">Fotografía digital con vestimenta formal</label>
+          <input type="file" id="doc_foto" name="doc_foto" accept="application/pdf,image/jpeg,image/png">
+          <span class="estado-archivo">Ningún archivo seleccionado</span>
+        </div>
+        <p class="ayuda">
+          Si tienes problemas para adjuntar algún documento, envíalo por correo a
+          <a href="mailto:serviciosescolares@redibaiconnect.org">serviciosescolares@redibaiconnect.org</a>, indicando tu nombre completo.
+        </p>
+      </section>
+
+      <!-- Paso: Revisión y firma -->
+      <section class="paso" data-paso="revision" data-titulo="Revisión y firma"
+               data-descripcion="Revisa tus datos. Puedes corregir cualquier bloque antes de enviar." hidden>
+        <div class="resumen" id="resumen"></div>
+        <label class="casilla">
+          <input type="checkbox" id="acepto_conformidad" name="acepto_conformidad" required>
+          <span>Acepto y me comprometo a cumplir las normas de control escolar y los reglamentos institucionales. *</span>
+        </label>
+        <p class="error-campo" id="errorConformidad" hidden>Debes aceptar la conformidad para poder enviar la ficha.</p>
+        <p class="fecha-firma" id="fechaFirmaTexto"></p>
+      </section>
+
+      <div id="mensaje" class="mensaje" role="alert" hidden></div>
+
+      <div class="acciones">
+        <button type="button" class="btn btn-secundario" id="btnAtras">← Atrás</button>
+        <div class="derecha">
+          <span class="nota">Los campos con * son obligatorios</span>
+          <button type="button" class="btn btn-primario" id="btnSiguiente">Guardar y continuar →</button>
+          <button type="submit" class="btn btn-primario btn-envio" id="btnEnviar" hidden>Enviar ficha de registro</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="exito" id="exito" hidden>
+      <span class="sello" aria-hidden="true">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </span>
+      <h2 tabindex="-1" id="tituloExito">Tu ficha fue enviada</h2>
+      <p id="textoExito">Servicios Escolares recibió tu registro. Si necesitas aclarar algo, escribe a serviciosescolares@redibaiconnect.org indicando tu nombre completo.</p>
+      <a class="btn btn-primario" href="index.html">Volver a los trámites</a>
+    </div>
+  </form>
+
+  <aside class="lateral" aria-label="Información de apoyo">
+    <div class="caja">
+      <div class="fila-avance"><h3>Tu avance</h3><span id="avanceConteo"></span></div>
+      <div class="barra" role="progressbar" aria-label="Avance del trámite" id="avanceContenedor" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="avanceBarra" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="caja">
+      <h3>Documentos que necesitarás</h3>
+      <ul class="lista-docs">
+        <li>Acta de nacimiento</li>
+        <li>CURP</li>
+        <li>INE</li>
+        <li>Último grado de estudios (certificado, título o cédula)</li>
+        <li>Fotografía digital con vestimenta formal</li>
+      </ul>
+      <p class="pequena">PDF legible de máximo 5 MB. La fotografía también admite JPG o PNG.</p>
+    </div>
+  </aside>
+
+</div>
+
+<script src="js/wizard.js"></script>
+</body>
+</html>
