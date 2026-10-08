@@ -1,4 +1,4 @@
-// Tablero de Matriculación (mismo diseño que Servicios Escolares).
+// Tablero de Trámites (mismo diseño que Servicios Escolares).
 // Para agregar una sección nueva: crear su <div id="seccion-…" class="tb-seccion tb-oculto">
 // en admin/index.html (con <div class="tb-nav" data-nav></div> y su contenido) y añadir
 // un recuadro a RECUADROS con el id de esa sección.
@@ -77,7 +77,7 @@
       if (j !== i) return;
       if (r.alAbrir) r.alAbrir();
       const nav = sec.querySelector('[data-nav]');
-      nav.innerHTML = `<button type="button" class="volver">← Matriculación</button>` +
+      nav.innerHTML = `<button type="button" class="volver">← Trámites</button>` +
         RECUADROS.map((x, k) => `<button type="button" data-k="${k}" class="${k === i ? 'activo' : ''}">${x.titulo}</button>`).join('');
       nav.querySelector('.volver').addEventListener('click', mostrarTablero);
       nav.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => abrir(Number(b.dataset.k))));
