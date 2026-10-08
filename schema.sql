@@ -90,3 +90,53 @@ CREATE INDEX IF NOT EXISTS idx_fichas_situacion ON fichas_registro (situacion);
 
 -- Matriculación: guarda la matrícula asignada en Servicios Escolares (si ya se matriculó).
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS matricula_asignada VARCHAR(20);
+
+-- ==========================================================
+-- Trámites del Departamento de Titulación y Posgrados
+-- (Titulación Licenciatura, Grado Maestría, Grado Doctorado)
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS tramites (
+    id                 SERIAL PRIMARY KEY,
+    anio               SMALLINT NOT NULL,
+    consecutivo        INTEGER NOT NULL,
+    folio              VARCHAR(20) NOT NULL UNIQUE,      -- TRM-0001/2026
+    tipo               VARCHAR(20) NOT NULL,             -- licenciatura | maestria | doctorado
+    estado             VARCHAR(30) NOT NULL DEFAULT 'en_revision', -- en_revision | con_observaciones | expediente_completo | concluido
+    plantel            VARCHAR(100),
+    primer_apellido    VARCHAR(100) NOT NULL,
+    segundo_apellido   VARCHAR(100),
+    nombres            VARCHAR(150) NOT NULL,
+    curp               VARCHAR(18) NOT NULL,
+    matricula          VARCHAR(20),
+    tel_celular        VARCHAR(20),
+    correo_electronico VARCHAR(150),
+    programa           VARCHAR(200),
+    periodo_egreso     VARCHAR(30),
+    modalidad          VARCHAR(20),                      -- con_tesis | sin_tesis
+    titulo_trabajo     TEXT,
+    drive_folder_id    VARCHAR(100),
+    observaciones      TEXT,
+    created_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
+    actualizado_en     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (anio, consecutivo)
+);
+CREATE INDEX IF NOT EXISTS idx_tramites_curp ON tramites (curp);
+CREATE INDEX IF NOT EXISTS idx_tramites_estado ON tramites (estado);
+
+CREATE TABLE IF NOT EXISTS tramite_documentos (
+    id             SERIAL PRIMARY KEY,
+    tramite_id     INTEGER NOT NULL REFERENCES tramites(id) ON DELETE CASCADE,
+    clave          VARCHAR(40) NOT NULL,
+    etiqueta       VARCHAR(200) NOT NULL,
+    interno        BOOLEAN NOT NULL DEFAULT FALSE,   -- true = lo gestiona Servicios Escolares
+    orden          SMALLINT NOT NULL DEFAULT 0,
+    estado         VARCHAR(20) NOT NULL,             -- estudiante: en_revision|verificado|no_cumple · interno: pendiente|en_proceso|listo
+    motivo         TEXT,                             -- por qué no cumple
+    drive_file_id  VARCHAR(100),
+    nombre_archivo VARCHAR(250),
+    version        SMALLINT NOT NULL DEFAULT 1,
+    revisado_por   VARCHAR(150),
+    revisado_en    TIMESTAMPTZ,
+    actualizado_en TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (tramite_id, clave)
+);

@@ -97,3 +97,39 @@ body.admin-tablero { background: #e3e9ef; color: #0b1520; margin: 0; }
 .admin-tablero .fichas-vacio { padding: 16px; color: #26333f; }
 @media (max-width: 640px) { .admin-tablero .ficha-l2 { padding-left: 0; } .admin-tablero .ficha-l1 { flex-wrap: wrap; } }
 .admin-tablero .ficha-docs .celda-documentos { max-width: none !important; width: auto !important; display: flex !important; flex-wrap: wrap; }
+
+/* ---------- Trámites de Titulación y Posgrados ---------- */
+.admin-tablero .tr-lista { display: flex; flex-direction: column; gap: 10px; }
+.admin-tablero .tr-contador { margin: 4px 0 10px; font-size: 0.85rem; font-weight: 600; color: #26333f; }
+.admin-tablero .tr-vacio { color: #4a5560; font-size: 0.9rem; margin: 6px 0; }
+.admin-tablero .tr-l2 { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.admin-tablero .tr-l2 .tr-abrir { margin-left: auto; }
+.tr-chip { display: inline-block; font-size: 0.74rem; font-weight: 700; padding: 3px 9px; border-radius: 10px; white-space: nowrap; }
+.tr-azul { background: #e2eef1; color: #0b4a55; }
+.tr-verde { background: #e1f0e9; color: #0f5e3a; }
+.tr-rojo { background: #fbeaea; color: #a0242f; }
+.tr-ambar { background: #fdf0dc; color: #7a4a06; }
+.tr-gris { background: #e6e9ec; color: #33404b; }
+.tr-modal { max-width: 860px; }
+.tr-datos { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px 16px; margin-bottom: 12px; }
+.tr-datos small { display: block; font-size: 0.7rem; font-weight: 700; color: #4a5560; text-transform: uppercase; letter-spacing: 0.03em; }
+.tr-datos b { font-size: 0.9rem; color: #0b1520; word-break: break-word; }
+.tr-datos .tr-ancho { grid-column: 1 / -1; }
+.tr-estado-general { margin-bottom: 4px; }
+.tr-doc { border: 1px solid #c3ccd5; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 8px; }
+.tr-doc.mal { border-color: #d99aa0; background: #fff8f8; }
+.tr-doc.interno { border-style: dashed; background: #f4f6f8; }
+.tr-doc-l1 { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tr-doc-l1 small { color: #4a5560; font-weight: 500; }
+.tr-doc select { padding: 6px 8px; border-radius: 8px; border: 1px solid #b9c3cc; }
+.tr-motivo { margin: 0; font-size: 0.86rem; font-weight: 600; color: #a0242f; }
+.tr-doc-acciones { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tr-doc-acciones .btn-mini, .tr-motivo-form .btn-mini { border-radius: 8px; padding: 6px 12px; font-weight: 700; cursor: pointer; text-decoration: none; font-size: 0.84rem; }
+.tr-ver { background: #ffffff; color: #142a46; border: 1px solid #1F3A5F; }
+.tr-ok { background: #1b7f4b; color: #ffffff; border: none; }
+.tr-mal { background: #ffffff; color: #a0242f; border: 1px solid #a0242f; }
+.tr-motivo-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.tr-motivo-form[hidden] { display: none; }
+.tr-motivo-form input { flex: 1; min-width: 220px; padding: 8px 10px; border-radius: 8px; border: 1px solid #b9c3cc; }
+.tr-obs { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #b9c3cc; font: inherit; }
+.tr-acciones { align-items: center; flex-wrap: wrap; }

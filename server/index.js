@@ -7,6 +7,10 @@ const basicAuth = require('express-basic-auth');
 const registroPublico = require('./routes/registroPublico');
 const registroAdmin = require('./routes/registroAdmin');
 const documentos = require('./routes/documentos');
+const tramitesPublico = require('./routes/tramitesPublico');
+const tramitesAdmin = require('./routes/tramitesAdmin');
+const fs = require('fs');
+const pool = require('./db/pool');
 
 const app = express();
 // tramites.redibaiconnect.org abre directamente el selector de trámites
@@ -23,6 +27,11 @@ const proteger = basicAuth({
   challenge: true,
   realm: 'Ficha de Registro - Servicios Escolares',
 });
+
+// Trámites de Titulación y Posgrados: administración (protegida) y formulario público.
+// La ruta de administración va antes de /api/fichas para que no la capture /api/fichas/:id.
+app.use('/api/fichas/tramites', proteger, tramitesAdmin);
+app.use('/api/tramites', tramitesPublico);
 
 // API pública: alta de una nueva ficha y subida de sus documentos (sin autenticación,
 // para que el estudiante pueda llenarla desde el enlace compartido por WhatsApp)
@@ -44,6 +53,13 @@ app.use(express.static(path.join(__dirname, '..', 'public'), { index: 'index.htm
 
 app.get('/healthz', (req, res) => res.json({ ok: true }));
 
-app.listen(PORT, () => {
-  console.log(`Ficha de Registro Digital escuchando en el puerto ${PORT}`);
-});
+// Al iniciar, aplica schema.sql (todo es "IF NOT EXISTS", se puede ejecutar siempre):
+// así las tablas nuevas se crean solas con cada despliegue, sin pasos manuales.
+pool.query(fs.readFileSync(path.join(__dirname, '..', 'schema.sql'), 'utf8'))
+  .then(() => console.log('Esquema de base de datos al día.'))
+  .catch((err) => console.error('No se pudo aplicar schema.sql:', err.message))
+  .finally(() => {
+    app.listen(PORT, () => {
+      console.log(`Ficha de Registro Digital escuchando en el puerto ${PORT}`);
+    });
+  });

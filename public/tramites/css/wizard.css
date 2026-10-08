@@ -255,3 +255,26 @@ li.actual .paso-num { background: var(--marino); border-color: var(--marino); co
   .resumen-bloque dt { font-size: 0.8rem; }
 }
 @media (prefers-reduced-motion: reduce) { .barra > div { transition: none; } }
+
+/* ---------- Trámites de Titulación y Posgrados ---------- */
+.aviso-pdf { padding: 14px 16px; border-radius: 12px; background: #fdf2e3; border: 1px solid #d9b97a; color: #5c3f0e; font-size: 0.95rem; }
+.aviso-pdf strong { color: #4a3209; }
+.grupo-titulo { margin: 6px 0 -8px; font-size: 0.95rem; font-weight: 700; color: var(--marino); }
+.documento.interno { border-style: dashed; background: #f3f5f6; }
+.documento.interno .etiqueta { display: flex; align-items: center; gap: 8px; color: var(--texto-suave); }
+.chip-estado { display: inline-flex; align-items: center; gap: 6px; width: fit-content; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+.chip-estado.revision { background: var(--azul-claro); color: #0d4f5c; }
+.chip-estado.ok { background: #e7f5ea; color: #155f25; }
+.chip-estado.mal { background: #fbe9e7; color: var(--rojo); }
+.chip-estado.gris { background: #e6e9ec; color: #3d4954; }
+.folio { font-family: var(--serif); font-size: 1.6rem; font-weight: 700; color: var(--marino); letter-spacing: 0.02em; }
+.seg-doc { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid var(--borde); border-radius: 12px; background: #fff; }
+.seg-doc.mal { border-color: #e0a29b; background: #fff8f7; }
+.seg-doc.interno { border-style: dashed; background: #f3f5f6; }
+.seg-doc .motivo { flex-basis: 100%; margin: 0; font-size: 0.9rem; color: var(--rojo); font-weight: 600; }
+.seg-doc .reenviar { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.seg-lista { display: flex; flex-direction: column; gap: 8px; }
+.estado-general { padding: 14px 16px; border-radius: 12px; font-weight: 600; }
+.estado-general.revision { background: var(--azul-claro); color: #0d4f5c; }
+.estado-general.mal { background: #fbe9e7; color: var(--rojo); }
+.estado-general.ok { background: #e7f5ea; color: #155f25; }

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Titulación y Posgrados - Red IBAI Texcoco</title>
+<link rel="stylesheet" href="css/wizard.css">
+</head>
+<body>
+
+<header class="encabezado">
+  <div class="encabezado-interior">
+    <div class="encabezado-fila">
+      <a href="index.html">← Cambiar trámite</a>
+      <span class="institucion">Red IBAI Texcoco · Departamento de Titulación y Posgrados</span>
+    </div>
+    <div class="titulo-fila">
+      <h1 id="tituloTramite">Trámite</h1>
+    </div>
+    <div class="progreso-movil" aria-hidden="true">
+      <div class="fila-avance"><span id="movilTitulo"></span><span id="movilConteo"></span></div>
+      <div class="barra"><div id="movilBarra" style="width:0%"></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="pagina">
+  <nav class="pasos-nav" aria-label="Pasos del trámite"><ol id="listaPasos"></ol></nav>
+
+  <form id="formTramite" class="panel" novalidate>
+    <div id="zonaFormulario" style="display:contents">
+      <div class="paso-cabeza">
+        <p class="eyebrow" id="eyebrow"></p>
+        <h2 id="tituloPaso" tabindex="-1"></h2>
+        <p id="descripcionPaso"></p>
+      </div>
+
+      <section class="paso" data-paso="identificacion" data-titulo="Identificación"
+               data-descripcion="Escribe tus datos como aparecen en tu CURP.">
+        <div class="aviso-formato"><strong>Aviso:</strong> completa los campos marcados con asterisco (*). El texto se convierte a MAYÚSCULAS SIN ACENTOS automáticamente.</div>
+        <div class="rejilla">
+          <div class="campo"><label for="primer_apellido">Primer apellido *</label><input type="text" id="primer_apellido" name="primer_apellido" required></div>
+          <div class="campo"><label for="segundo_apellido">Segundo apellido</label><input type="text" id="segundo_apellido" name="segundo_apellido"></div>
+          <div class="campo"><label for="nombres">Nombre(s) *</label><input type="text" id="nombres" name="nombres" required></div>
+        </div>
+        <div class="rejilla">
+          <div class="campo"><label for="curp">CURP *</label><input type="text" id="curp" name="curp" maxlength="18" autocapitalize="characters" spellcheck="false" required><span class="ayuda">18 caracteres. Con ella consultarás tu trámite.</span></div>
+          <div class="campo"><label for="matricula">Matrícula</label><input type="text" id="matricula" name="matricula" maxlength="20"><span class="ayuda">Si la conoces.</span></div>
+          <div class="campo"><label for="plantel">Plantel *</label><select id="plantel" name="plantel" required><option value="">Selecciona un plantel</option></select></div>
+        </div>
+        <div class="rejilla ancha">
+          <div class="campo"><label for="tel_celular">Tel. celular *</label><input type="tel" id="tel_celular" name="tel_celular" autocomplete="tel" required></div>
+          <div class="campo"><label for="correo_electronico">Correo electrónico *</label><input type="email" id="correo_electronico" name="correo_electronico" autocomplete="email" required></div>
+        </div>
+      </section>
+
+      <section class="paso" data-paso="grado" data-titulo="Datos del grado"
+               data-descripcion="El programa que concluiste y la modalidad con la que lo obtendrás." hidden>
+        <div class="rejilla ancha">
+          <div class="campo"><label for="programa">Programa cursado *</label><input type="text" id="programa" name="programa" required></div>
+          <div class="campo"><label for="periodo_egreso">Periodo de egreso *</label><input type="text" id="periodo_egreso" name="periodo_egreso" placeholder="Ejemplo: 2026-2" required></div>
+        </div>
+        <div class="rejilla ancha">
+          <div class="campo"><label for="modalidad">Modalidad *</label>
+            <select id="modalidad" name="modalidad" required>
+              <option value="">Selecciona una opción</option>
+              <option value="con_tesis">Con tesis</option>
+              <option value="sin_tesis">Sin tesis</option>
+            </select></div>
+          <div class="campo"><label for="titulo_trabajo">Título de la tesis o del trabajo</label><input type="text" id="titulo_trabajo" name="titulo_trabajo"></div>
+        </div>
+      </section>
+
+      <section class="paso" data-paso="documentos" data-titulo="Documentos"
+               data-descripcion="Sube cada documento por separado." hidden>
+        <div class="aviso-pdf"><strong>Solo PDF escaneado y legible, máximo 5 MB por documento.</strong> No se aceptan fotografías tomadas con el celular. Todos los documentos pasan a verificación de Servicios Escolares; si alguno no cumple, te indicaremos el motivo y solo tendrás que volver a subir ese documento.</div>
+        <div id="listaDocumentos" style="display:flex;flex-direction:column;gap:14px"></div>
+      </section>
+
+      <section class="paso" data-paso="revision" data-titulo="Confirmación"
+               data-descripcion="Revisa tus datos antes de enviar." hidden>
+        <div class="resumen" id="resumen"></div>
+        <label class="casilla">
+          <input type="checkbox" id="acepto">
+          <span>Declaro que la información es verídica y que los documentos son copias fieles de los originales, que presentaré para cotejo cuando Servicios Escolares lo solicite. *</span>
+        </label>
+        <p class="error-campo" id="errorAcepto" hidden>Debes aceptar la declaración para enviar el trámite.</p>
+      </section>
+
+      <div id="mensaje" class="mensaje" role="alert" hidden></div>
+
+      <div class="acciones">
+        <button type="button" class="btn btn-secundario" id="btnAtras">← Atrás</button>
+        <div class="derecha">
+          <span class="nota">Los campos con * son obligatorios</span>
+          <button type="button" class="btn btn-primario" id="btnSiguiente">Guardar y continuar →</button>
+          <button type="submit" class="btn btn-primario btn-envio" id="btnEnviar" hidden>Enviar trámite</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="exito" id="exito" hidden>
+      <span class="sello" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+      <h2 tabindex="-1" id="tituloExito">Tu trámite fue enviado</h2>
+      <p>Tu folio es:</p>
+      <span class="folio" id="folioExito"></span>
+      <p>Guárdalo: con tu folio y tu CURP podrás consultar la verificación de tus documentos y, si alguno no cumple, volver a subirlo.</p>
+      <a class="btn btn-primario" id="enlaceSeguimiento" href="seguimiento.html">Consultar mi trámite</a>
+    </div>
+  </form>
+
+  <aside class="lateral" aria-label="Información de apoyo">
+    <div class="caja">
+      <div class="fila-avance"><h3>Tu avance</h3><span id="avanceConteo"></span></div>
+      <div class="barra"><div id="avanceBarra" style="width:0%"></div></div>
+    </div>
+    <div class="caja">
+      <h3>Documentos que subirás</h3>
+      <ul class="lista-docs" id="listaLateral"></ul>
+      <p class="pequena">PDF escaneado y legible, máximo 5 MB cada uno.</p>
+    </div>
+  </aside>
+</div>
+
+<script src="js/tramite.js"></script>
+</body>
+</html>

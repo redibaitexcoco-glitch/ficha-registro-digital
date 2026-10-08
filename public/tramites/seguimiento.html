@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seguimiento de trámite - Red IBAI Texcoco</title>
+<link rel="stylesheet" href="css/wizard.css">
+</head>
+<body>
+<header class="encabezado">
+  <div class="encabezado-interior">
+    <div class="encabezado-fila">
+      <a href="index.html">← Trámites</a>
+      <span class="institucion">Red IBAI Texcoco · Servicios Escolares</span>
+    </div>
+    <h1>Seguimiento de mi trámite</h1>
+    <p class="subtitulo">Consulta la verificación de tus documentos con tu folio y tu CURP.</p>
+  </div>
+</header>
+
+<main class="contenido" style="max-width:820px">
+  <form id="formConsulta" class="panel" novalidate>
+    <div class="rejilla ancha">
+      <div class="campo"><label for="folio">Folio del trámite</label><input type="text" id="folio" placeholder="TRM-0001/2026" autocapitalize="characters" spellcheck="false" required></div>
+      <div class="campo"><label for="curp">CURP</label><input type="text" id="curp" maxlength="18" autocapitalize="characters" spellcheck="false" required></div>
+    </div>
+    <div id="mensaje" class="mensaje" role="alert" hidden></div>
+    <div><button type="submit" class="btn btn-primario" id="btnConsultar">Consultar</button></div>
+  </form>
+
+  <section class="panel" id="resultado" hidden aria-live="polite">
+    <div class="paso-cabeza">
+      <p class="eyebrow" id="resTramite"></p>
+      <h2 id="resFolio" tabindex="-1"></h2>
+      <p id="resNombre"></p>
+    </div>
+    <div class="estado-general" id="resEstado"></div>
+    <p class="grupo-titulo">Documentos que subiste</p>
+    <div class="seg-lista" id="docsEstudiante"></div>
+    <p class="grupo-titulo">Los gestiona Servicios Escolares</p>
+    <div class="seg-lista" id="docsInternos"></div>
+  </section>
+</main>
+
+<script src="js/seguimiento.js"></script>
+</body>
+</html>

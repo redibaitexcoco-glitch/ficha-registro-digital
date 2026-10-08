@@ -93,7 +93,44 @@
   </table>
     </div>
   </div>
+
+  <!-- Sección: Trámites de Titulación y Posgrados -->
+  <div id="seccion-tramites" class="tb-seccion tb-oculto">
+    <div class="tb-nav" data-nav></div>
+    <div class="tb-caja">
+      <h2>Trámites de Titulación y Posgrados</h2>
+      <div class="admin-filtros tr-filtros">
+        <input type="text" id="trQ" placeholder="Buscar por folio, CURP, matrícula o nombre...">
+        <select id="trTipo">
+          <option value="">Todos los trámites</option>
+          <option value="licenciatura">Titulación Licenciatura</option>
+          <option value="maestria">Grado Maestría</option>
+          <option value="doctorado">Grado Doctorado</option>
+        </select>
+        <select id="trEstado">
+          <option value="">Todos los estados</option>
+          <option value="en_revision">En revisión</option>
+          <option value="con_observaciones">Con observaciones</option>
+          <option value="expediente_completo">Expediente completo</option>
+          <option value="concluido">Concluido</option>
+        </select>
+        <button type="button" id="trBuscar">Buscar</button>
+      </div>
+      <p class="tr-contador" id="trContador"></p>
+      <div id="trLista" class="tr-lista"></div>
+    </div>
+  </div>
 </main>
+
+<div id="modalTramite" class="modal-overlay" hidden>
+  <div class="modal-caja tr-modal" role="dialog" aria-modal="true" aria-labelledby="trTitulo">
+    <div class="modal-header">
+      <h2 id="trTitulo">Trámite</h2>
+      <button type="button" class="btn-cerrar-modal" id="trCerrar" aria-label="Cerrar">&times;</button>
+    </div>
+    <div id="trDetalle"></div>
+  </div>
+</div>
 
 <div id="modalEditar" class="modal-overlay" hidden>
   <div class="modal-caja">
@@ -263,6 +300,7 @@
 
 <script src="../js/tablero.js"></script>
 <script src="../js/admin.js"></script>
+<script src="../js/tramites-admin.js"></script>
 <script>
   // Botones rápidos de revisión: usan el mismo filtro "revisado" del formulario
   document.querySelectorAll('#fichasChips button').forEach(b => b.addEventListener('click', () => {

@@ -4,7 +4,7 @@
 // un recuadro a RECUADROS con el id de esa sección.
 (function () {
   // Íconos Tabler (licencia MIT, (c) Paweł Kuna), incluidos para no depender de servicios externos.
-  const ICONOS = { 'clipboard-list': "<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/> <path d=\"M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2\" /> <path d=\"M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z\" /> <path d=\"M9 12l.01 0\" /> <path d=\"M13 12l2 0\" /> <path d=\"M9 16l.01 0\" /> <path d=\"M13 16l2 0\" /> </svg>" };
+  const ICONOS = { 'certificado': "<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 9l10-5 10 5-10 5z\"/><path d=\"M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5\"/><path d=\"M22 9v5\"/></svg>", 'clipboard-list': "<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/> <path d=\"M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2\" /> <path d=\"M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z\" /> <path d=\"M9 12l.01 0\" /> <path d=\"M13 12l2 0\" /> <path d=\"M9 16l.01 0\" /> <path d=\"M13 16l2 0\" /> </svg>" };
 
   const RECUADROS = [
     {
@@ -18,6 +18,20 @@
         if (!r.ok) return null;
         const n = (await r.json()).length;
         return n ? [`${n >= 500 ? '500+' : n} pendiente${n === 1 ? '' : 's'} de revisar`, 'tb-ambar'] : null;
+      },
+    },
+    {
+      seccion: 'seccion-tramites',
+      titulo: 'Trámites de Titulación y Posgrados',
+      desc: 'Verificar documentos de Titulación Licenciatura, Grado Maestría y Grado Doctorado',
+      icono: 'certificado',
+      color: 2,
+      alAbrir: () => window.tramitesAdmin && window.tramitesAdmin.cargar(),
+      indicador: async () => {
+        const r = await fetch('/api/fichas/tramites?estado=en_revision');
+        if (!r.ok) return null;
+        const n = (await r.json()).filter((t) => t.por_revisar > 0).length;
+        return n ? [`${n} con documentos por revisar`, 'tb-ambar'] : null;
       },
     },
   ];
@@ -61,6 +75,7 @@
       const sec = document.getElementById(r.seccion);
       sec.classList.toggle('tb-oculto', j !== i);
       if (j !== i) return;
+      if (r.alAbrir) r.alAbrir();
       const nav = sec.querySelector('[data-nav]');
       nav.innerHTML = `<button type="button" class="volver">← Matriculación</button>` +
         RECUADROS.map((x, k) => `<button type="button" data-k="${k}" class="${k === i ? 'activo' : ''}">${x.titulo}</button>`).join('');
