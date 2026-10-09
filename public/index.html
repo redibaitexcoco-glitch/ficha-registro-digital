@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ficha Única de Admisión e Inscripción - Red IBAI Texcoco</title>
+<title>Ficha Unica de Trámites - Red IBAI Texcoco</title>
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 <header class="topbar">
-  <h1>Sistema Institucional de Gestión y Registro de Matrícula</h1>
-  <p>Red IBAI Texcoco · Servicios Escolares · Ficha Única de Admisión e Inscripción</p>
+  <h1>Sistema Institucional de Administración y Servicios Escolares</h1>
+  <p>Red IBAI Texcoco · Servicios Escolares · Ficha Unica de Trámites</p>
 </header>
 
 <main class="wrap">
@@ -20,6 +20,27 @@
 
   <form id="formFicha" novalidate>
     <input type="hidden" name="capturado_por" value="estudiante">
+
+    <section class="card">
+      <div class="field">
+        <label for="tramite">Trámite que deseas realizar *</label>
+        <select id="tramite" name="tramite" required>
+          <option value="">Selecciona un trámite</option>
+          <optgroup label="Departamento de Control Escolar">
+            <option value="Inscripción">Inscripción</option>
+            <option value="Reinscripción">Reinscripción</option>
+            <option value="Baja definitiva">Baja definitiva</option>
+            <option value="Baja temporal">Baja temporal</option>
+          </optgroup>
+          <optgroup label="Departamento de Titulación y Posgrados">
+            <option value="Titulación Licenciatura">Titulación Licenciatura</option>
+            <option value="Grado Maestría">Grado Maestría</option>
+            <option value="Grado Doctorado">Grado Doctorado</option>
+            <option value="Posdoctorado" disabled>Posdoctorado (próximamente)</option>
+          </optgroup>
+        </select>
+      </div>
+    </section>
 
     <section class="card">
       <div class="grid grid-2">
@@ -219,6 +240,18 @@
         Si tiene problemas para adjuntar algún documento, puede enviarlo por correo a
         <a href="mailto:serviciosescolares@redibaiconnect.org">serviciosescolares@redibaiconnect.org</a>, indicando su nombre completo.
       </p>
+    </section>
+
+    <section class="card card-aviso-privacidad">
+      <h2>Aviso de privacidad y uso de la información</h2>
+      <p class="hint">
+        Los datos personales y documentos recabados en esta ficha serán tratados conforme a lo dispuesto por la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, y serán utilizados única y exclusivamente para la integración del expediente académico, trámites de control escolar y, en su caso, titulación o grado ante Red IBAI Texcoco / Red IBAI Connect. Sus datos no serán transferidos a terceros sin su consentimiento, salvo los casos previstos por la ley o requeridos por autoridades educativas competentes. Usted podrá ejercer sus derechos de acceso, rectificación, cancelación u oposición (derechos ARCO) enviando su solicitud a
+        <a href="mailto:serviciosescolares@redibaiconnect.org">serviciosescolares@redibaiconnect.org</a>.
+      </p>
+      <label class="checkbox-line">
+        <input type="checkbox" id="acepto_aviso_privacidad" name="acepto_aviso_privacidad" required>
+        He leído y acepto el aviso de privacidad y el uso de la información que se recaba.
+      </label>
     </section>
 
     <section class="card">

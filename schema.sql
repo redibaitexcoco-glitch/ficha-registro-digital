@@ -91,6 +91,11 @@ CREATE INDEX IF NOT EXISTS idx_fichas_situacion ON fichas_registro (situacion);
 -- Matriculación: guarda la matrícula asignada en Servicios Escolares (si ya se matriculó).
 ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS matricula_asignada VARCHAR(20);
 
+-- Trámite seleccionado por el usuario al llenar la ficha (Inscripción, Reinscripción, etc.)
+-- y aceptación del aviso de privacidad.
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS tramite VARCHAR(80) NOT NULL DEFAULT 'Inscripción';
+ALTER TABLE fichas_registro ADD COLUMN IF NOT EXISTS acepto_aviso_privacidad BOOLEAN NOT NULL DEFAULT FALSE;
+
 -- ==========================================================
 -- Trámites del Departamento de Titulación y Posgrados
 -- (Titulación Licenciatura, Grado Maestría, Grado Doctorado)

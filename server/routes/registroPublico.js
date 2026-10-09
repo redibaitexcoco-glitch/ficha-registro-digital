@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('../db/pool');
 
 const CAMPOS_REQUERIDOS = [
+  'tramite',
   'primer_apellido',
   'segundo_apellido',
   'nombres',
@@ -11,6 +12,17 @@ const CAMPOS_REQUERIDOS = [
   'institucion_procedencia',
   'tel_celular',
   'correo_electronico',
+];
+
+const TRAMITES_VALIDOS = [
+  'Inscripción',
+  'Reinscripción',
+  'Baja definitiva',
+  'Baja temporal',
+  'Titulación Licenciatura',
+  'Grado Maestría',
+  'Grado Doctorado',
+  'Posdoctorado',
 ];
 
 const PROGRAMAS_VALIDOS = [
@@ -76,6 +88,14 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Debe aceptar la conformidad para poder enviar la ficha.' });
   }
 
+  if (!b.acepto_aviso_privacidad) {
+    return res.status(400).json({ error: 'Debe aceptar el aviso de privacidad para poder enviar la ficha.' });
+  }
+
+  if (!TRAMITES_VALIDOS.includes(b.tramite)) {
+    return res.status(400).json({ error: 'El trámite seleccionado no es válido.' });
+  }
+
   if (limpiar(b.programa_educativo) && !PROGRAMAS_VALIDOS.includes(b.programa_educativo)) {
     return res.status(400).json({ error: 'El programa educativo seleccionado no es válido.' });
   }
@@ -98,6 +118,7 @@ router.post('/', async (req, res) => {
   const capturadoPor = b.capturado_por === 'personal' ? 'personal' : 'estudiante';
 
   const valores = [
+    limpiar(b.tramite),
     limpiar(b.plantel),
     limpiar(b.programa_educativo),
 
@@ -129,23 +150,24 @@ router.post('/', async (req, res) => {
     esMenor ? limpiar(b.tutor_telefono) : null,
 
     true,
+    true,
     b.fecha_firma || new Date().toISOString().slice(0, 10),
     capturadoPor,
   ];
 
   const sql = `
     INSERT INTO fichas_registro (
-      plantel, programa_educativo,
+      tramite, plantel, programa_educativo,
       primer_apellido, segundo_apellido, nombres, curp, fecha_nacimiento, edad,
       institucion_procedencia, promedio_ultimo_grado,
       calle, no_ext, no_int, colonia, cp, localidad, municipio, entidad_federativa,
       tel_casa, tel_celular, correo_electronico,
       tutor_primer_apellido, tutor_segundo_apellido, tutor_nombres, tutor_ocupacion, tutor_telefono,
-      acepto_conformidad, fecha_firma, capturado_por
+      acepto_conformidad, acepto_aviso_privacidad, fecha_firma, capturado_por
     ) VALUES (
-      $1,$2, $3,$4,$5,$6,$7,$8, $9,$10,
-      $11,$12,$13,$14,$15,$16,$17,$18, $19,$20,$21,
-      $22,$23,$24,$25,$26, $27,$28,$29
+      $1,$2,$3, $4,$5,$6,$7,$8,$9, $10,$11,
+      $12,$13,$14,$15,$16,$17,$18,$19, $20,$21,$22,
+      $23,$24,$25,$26,$27, $28,$29,$30,$31
     )
     RETURNING id, created_at;
   `;

@@ -183,6 +183,7 @@
       datos[nombre] = valor;
     }
     datos.acepto_conformidad = document.getElementById('acepto_conformidad').checked;
+    datos.acepto_aviso_privacidad = document.getElementById('acepto_aviso_privacidad').checked;
     datos.fecha_firma = new Date().toISOString().slice(0, 10);
 
     btnEnviar.disabled = true;
