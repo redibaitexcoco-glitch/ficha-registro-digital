@@ -133,3 +133,7 @@ body.admin-tablero { background: #e3e9ef; color: #0b1520; margin: 0; }
 .tr-motivo-form input { flex: 1; min-width: 220px; padding: 8px 10px; border-radius: 8px; border: 1px solid #b9c3cc; }
 .tr-obs { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #b9c3cc; font: inherit; }
 .tr-acciones { align-items: center; flex-wrap: wrap; }
+
+/* Tablero agrupado por departamento */
+.admin-tablero #tableroRecuadros { display: flex; flex-direction: column; gap: 22px; }
+.admin-tablero .tb-grupo-titulo { margin: 0 0 10px; font-size: 0.95rem; font-weight: 700; color: #142a46; text-transform: uppercase; letter-spacing: 0.04em; padding-bottom: 6px; border-bottom: 2px solid #b8893f; }

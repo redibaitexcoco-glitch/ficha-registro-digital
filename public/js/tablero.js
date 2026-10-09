@@ -6,11 +6,29 @@
   // Íconos Tabler (licencia MIT, (c) Paweł Kuna), incluidos para no depender de servicios externos.
   const ICONOS = { 'certificado': "<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 9l10-5 10 5-10 5z\"/><path d=\"M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5\"/><path d=\"M22 9v5\"/></svg>", 'clipboard-list': "<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/> <path d=\"M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2\" /> <path d=\"M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z\" /> <path d=\"M9 12l.01 0\" /> <path d=\"M13 12l2 0\" /> <path d=\"M9 16l.01 0\" /> <path d=\"M13 16l2 0\" /> </svg>" };
 
+  // Un trámite de Titulación y Posgrados: abre la misma sección, ya filtrada por tipo
+  const tramite = (tipo, titulo, desc, color) => ({
+    seccion: 'seccion-tramites', grupo: 'Departamento de Titulación y Posgrados',
+    titulo, desc, icono: 'certificado', color,
+    alAbrir: () => {
+      document.getElementById('trTituloSeccion').textContent = titulo;
+      document.getElementById('trTipo').value = tipo;
+      if (window.tramitesAdmin) window.tramitesAdmin.cargar();
+    },
+    indicador: async () => {
+      const r = await fetch(`/api/fichas/tramites?tipo=${tipo}`);
+      if (!r.ok) return null;
+      const n = (await r.json()).filter((t) => t.por_revisar > 0).length;
+      return n ? [`${n} con documentos por revisar`, 'tb-ambar'] : null;
+    },
+  });
+
   const RECUADROS = [
     {
       seccion: 'seccion-fichas',
-      titulo: 'Fichas de Registro recibidas',
-      desc: 'Revisar fichas y documentos, situación del aspirante y asignar matrícula',
+      grupo: 'Departamento de Control Escolar',
+      titulo: 'Inscripción',
+      desc: 'Revisar fichas y documentos de nuevo ingreso, situación del aspirante y asignar matrícula',
       icono: 'clipboard-list',
       color: 1,
       indicador: async () => {
@@ -20,33 +38,38 @@
         return n ? [`${n >= 500 ? '500+' : n} pendiente${n === 1 ? '' : 's'} de revisar`, 'tb-ambar'] : null;
       },
     },
-    {
-      seccion: 'seccion-tramites',
-      titulo: 'Trámites de Titulación y Posgrados',
-      desc: 'Verificar documentos de Titulación Licenciatura, Grado Maestría y Grado Doctorado',
-      icono: 'certificado',
-      color: 2,
-      alAbrir: () => window.tramitesAdmin && window.tramitesAdmin.cargar(),
-      indicador: async () => {
-        const r = await fetch('/api/fichas/tramites?estado=en_revision');
-        if (!r.ok) return null;
-        const n = (await r.json()).filter((t) => t.por_revisar > 0).length;
-        return n ? [`${n} con documentos por revisar`, 'tb-ambar'] : null;
-      },
-    },
+    tramite('licenciatura', 'Titulación Licenciatura', 'Verificar documentos del trámite de titulación de licenciatura', 2),
+    tramite('maestria', 'Grado Maestría', 'Verificar documentos del trámite de obtención del grado de maestría', 3),
+    tramite('doctorado', 'Grado Doctorado', 'Verificar documentos del trámite de obtención del grado de doctorado', 4),
   ];
 
   const vistaTablero = document.getElementById('vistaTablero');
   const rejilla = document.getElementById('tableroRecuadros');
 
-  function pintarTablero() {
-    rejilla.innerHTML = RECUADROS.map((r, i) => `
+  function tarjeta(r, i) {
+    return `
       <button type="button" class="tb-card tb-c${r.color}" data-i="${i}">
         <span class="tb-barra"></span>
         <span class="tb-icono">${ICONOS[r.icono] || ''}</span>
         <b>${r.titulo}</b><span class="tb-desc">${r.desc}</span>
         <span class="tb-indicador tb-oculto" data-indicador="${i}"></span>
-      </button>`).join('');
+      </button>`;
+  }
+
+  // Recuadros agrupados por departamento, en el mismo orden del selector que ve el estudiante
+  function pintarTablero() {
+    const grupos = [];
+    RECUADROS.forEach((r, i) => {
+      let g = grupos.find((x) => x.nombre === r.grupo);
+      if (!g) grupos.push(g = { nombre: r.grupo, items: [] });
+      g.items.push(tarjeta(r, i));
+    });
+    rejilla.classList.remove('tb-grid');
+    rejilla.innerHTML = grupos.map((g) => `
+      <section class="tb-grupo">
+        <h2 class="tb-grupo-titulo">${g.nombre}</h2>
+        <div class="tb-grid">${g.items.join('')}</div>
+      </section>`).join('');
     rejilla.querySelectorAll('.tb-card').forEach(b => b.addEventListener('click', () => abrir(Number(b.dataset.i))));
   }
 
@@ -63,25 +86,25 @@
     });
   }
 
+  const SECCIONES = [...new Set(RECUADROS.map(r => r.seccion))];
+
   function mostrarTablero() {
-    RECUADROS.forEach(r => document.getElementById(r.seccion).classList.add('tb-oculto'));
+    SECCIONES.forEach(id => document.getElementById(id).classList.add('tb-oculto'));
     vistaTablero.classList.remove('tb-oculto');
     actualizarIndicadores();
   }
 
   function abrir(i) {
+    const r = RECUADROS[i];
     vistaTablero.classList.add('tb-oculto');
-    RECUADROS.forEach((r, j) => {
-      const sec = document.getElementById(r.seccion);
-      sec.classList.toggle('tb-oculto', j !== i);
-      if (j !== i) return;
-      if (r.alAbrir) r.alAbrir();
-      const nav = sec.querySelector('[data-nav]');
-      nav.innerHTML = `<button type="button" class="volver">← Trámites</button>` +
-        RECUADROS.map((x, k) => `<button type="button" data-k="${k}" class="${k === i ? 'activo' : ''}">${x.titulo}</button>`).join('');
-      nav.querySelector('.volver').addEventListener('click', mostrarTablero);
-      nav.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => abrir(Number(b.dataset.k))));
-    });
+    SECCIONES.forEach(id => document.getElementById(id).classList.toggle('tb-oculto', id !== r.seccion));
+    const sec = document.getElementById(r.seccion);
+    if (r.alAbrir) r.alAbrir();
+    const nav = sec.querySelector('[data-nav]');
+    nav.innerHTML = `<button type="button" class="volver">← Trámites</button>` +
+      RECUADROS.map((x, k) => `<button type="button" data-k="${k}" class="${k === i ? 'activo' : ''}">${x.titulo}</button>`).join('');
+    nav.querySelector('.volver').addEventListener('click', mostrarTablero);
+    nav.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => abrir(Number(b.dataset.k))));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 

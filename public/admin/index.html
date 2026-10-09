@@ -23,7 +23,7 @@
   <div id="seccion-fichas" class="tb-seccion tb-oculto">
     <div class="tb-nav" data-nav></div>
     <div class="tb-caja">
-      <h2>Fichas de Registro recibidas</h2>
+      <h2>Inscripción · Fichas de Registro recibidas</h2>
   <div class="fichas-rapidos">
     <span class="nota-fichas" id="fichasContador"></span>
     <div class="fichas-chips" id="fichasChips">
@@ -98,10 +98,10 @@
   <div id="seccion-tramites" class="tb-seccion tb-oculto">
     <div class="tb-nav" data-nav></div>
     <div class="tb-caja">
-      <h2>Trámites de Titulación y Posgrados</h2>
+      <h2 id="trTituloSeccion">Trámites de Titulación y Posgrados</h2>
       <div class="admin-filtros tr-filtros">
         <input type="text" id="trQ" placeholder="Buscar por folio, CURP, matrícula o nombre...">
-        <select id="trTipo">
+        <select id="trTipo" hidden aria-hidden="true">
           <option value="">Todos los trámites</option>
           <option value="licenciatura">Titulación Licenciatura</option>
           <option value="maestria">Grado Maestría</option>
