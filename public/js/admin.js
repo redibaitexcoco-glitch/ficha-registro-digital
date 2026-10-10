@@ -16,6 +16,149 @@
   const btnCancelarEditar = document.getElementById('btnCancelarEditar');
   const mensajeEditar = document.getElementById('mensajeEditar');
 
+  // ---------- Asignar matrícula con vista previa ----------
+  // Muestra la matrícula que se asignaría (se recalcula al cambiar año o periodo) y solo
+  // crea al estudiante en Servicios Escolares al pulsar "Confirmar y asignar".
+  (function estilosVistaPrevia() {
+    const st = document.createElement('style');
+    st.textContent = `
+      .vp-caja { max-width: 560px; }
+      .vp-datos { display: grid; grid-template-columns: 110px 1fr; gap: 6px 12px; margin: 4px 0 14px; font-size: 0.92rem; }
+      .vp-datos span:nth-child(odd) { font-weight: 700; color: #26333f; }
+      .vp-datos span:nth-child(even) { color: #0b1520; word-break: break-word; }
+      .vp-selectores { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+      .vp-selectores label { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 0.85rem; color: #142a46; flex: 1; min-width: 150px; }
+      .vp-selectores select { padding: 8px 10px; border-radius: 8px; border: 1px solid #b9c3cc; font: inherit; }
+      .vp-resultado { border: 2px solid #1F3A5F; border-radius: 12px; padding: 14px; text-align: center; margin-bottom: 12px; }
+      .vp-resultado small { display: block; font-size: 0.75rem; font-weight: 700; color: #4a5560; letter-spacing: 0.04em; text-transform: uppercase; }
+      .vp-resultado b { display: block; font-family: ui-monospace, Menlo, monospace; font-size: 1.6rem; color: #142a46; margin-top: 4px; }
+      .vp-resultado.bloqueado { border-color: #a0242f; background: #fff8f8; }
+      .vp-resultado.bloqueado b { font-family: inherit; font-size: 0.95rem; color: #a0242f; }
+      .vp-aviso { margin: 0 0 10px; padding: 10px 12px; border-radius: 8px; background: #fdf0dc; color: #7a4a06; font-size: 0.88rem; font-weight: 600; }
+      .vp-nota { margin: 0 0 12px; font-size: 0.82rem; color: #4a5560; }
+      .vp-error { color: #a0242f; font-weight: 600; font-size: 0.9rem; min-height: 1em; margin: 0 0 8px; }
+      #vpConfirmar { background: #1F3A5F; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font: inherit; font-weight: 700; cursor: pointer; }
+      #vpConfirmar:hover:not(:disabled) { background: #142a46; }
+      #vpConfirmar:disabled { opacity: 0.55; cursor: not-allowed; }
+      #vpConfirmar:focus-visible, .vp-selectores select:focus-visible { outline: 3px solid #b8893f; outline-offset: 2px; }`;
+    document.head.appendChild(st);
+  })();
+
+  function textoSeguro(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function abrirVistaPreviaMatricula(id) {
+    const hoy = new Date();
+    const anioActual = hoy.getFullYear();
+    const periodoActual = String(Math.floor(hoy.getMonth() / 4) + 1);
+    const fondo = document.createElement('div');
+    fondo.className = 'modal-overlay';
+    fondo.innerHTML = `
+      <div class="modal-caja vp-caja" role="dialog" aria-modal="true" aria-labelledby="vpTitulo">
+        <div class="modal-header">
+          <h2 id="vpTitulo">Asignar matrícula</h2>
+          <button type="button" class="btn-cerrar-modal" data-cerrar aria-label="Cerrar">&times;</button>
+        </div>
+        <div class="vp-datos" id="vpDatos"><span>Ficha</span><span>Cargando…</span></div>
+        <div class="vp-selectores">
+          <label>Año de ingreso
+            <select id="vpAnio">${[anioActual - 1, anioActual, anioActual + 1].map(a => `<option value="${a}" ${a === anioActual ? 'selected' : ''}>${a}</option>`).join('')}</select>
+          </label>
+          <label>Periodo de ingreso
+            <select id="vpPeriodo">
+              <option value="1" ${periodoActual === '1' ? 'selected' : ''}>1 · enero – abril</option>
+              <option value="2" ${periodoActual === '2' ? 'selected' : ''}>2 · mayo – agosto</option>
+              <option value="3" ${periodoActual === '3' ? 'selected' : ''}>3 · septiembre – diciembre</option>
+            </select>
+          </label>
+        </div>
+        <div class="vp-resultado" id="vpResultado"><small>Matrícula que se asignará</small><b>Calculando…</b></div>
+        <div id="vpAvisos"></div>
+        <p class="vp-nota">Al confirmar, se crea al estudiante en Servicios Escolares con contraseña inicial igual a su CURP. Si otra persona asigna una matrícula del mismo programa y periodo en este momento, el consecutivo puede avanzar uno; el mensaje final mostrará la matrícula real.</p>
+        <p class="vp-error" id="vpError" role="alert"></p>
+        <div class="modal-acciones">
+          <button type="button" class="btn-secundario" data-cerrar>Cancelar</button>
+          <button type="button" id="vpConfirmar" disabled>Confirmar y asignar</button>
+        </div>
+      </div>`;
+    document.body.appendChild(fondo);
+    const $ = (sel) => fondo.querySelector(sel);
+    const selAnio = $('#vpAnio');
+    const selPeriodo = $('#vpPeriodo');
+    const btnConfirmar = $('#vpConfirmar');
+    let consulta = 0;
+    let enviando = false;
+
+    const cerrar = () => { if (enviando) return; fondo.remove(); document.removeEventListener('keydown', teclas); };
+    const teclas = (e) => { if (e.key === 'Escape') cerrar(); };
+    document.addEventListener('keydown', teclas);
+    fondo.addEventListener('click', (e) => { if (e.target === fondo || e.target.closest('[data-cerrar]')) cerrar(); });
+
+    async function actualizar() {
+      const n = ++consulta;
+      btnConfirmar.disabled = true;
+      $('#vpError').textContent = '';
+      $('#vpResultado').className = 'vp-resultado';
+      $('#vpResultado').innerHTML = '<small>Matrícula que se asignará</small><b>Calculando…</b>';
+      try {
+        const r = await fetch(`/api/matricular/${id}/vista-previa?anio=${selAnio.value}&periodo=${selPeriodo.value}`);
+        const d = await r.json().catch(() => ({}));
+        if (n !== consulta) return; // llegó una respuesta vieja
+        if (!r.ok) throw new Error(d.error || 'No se pudo calcular la matrícula');
+        $('#vpDatos').innerHTML = `
+          <span>Estudiante</span><span>${textoSeguro(d.nombre)}</span>
+          <span>CURP</span><span>${textoSeguro(d.curp || '—')}</span>
+          <span>Programa</span><span>${textoSeguro(d.programa || '—')}</span>
+          <span>Plantel</span><span>${textoSeguro(d.plantel || '—')}</span>`;
+        $('#vpAvisos').innerHTML = d.pago_externo
+          ? `<p class="vp-aviso">${textoSeguro(d.plantel_pago_externo || d.plantel)} cobra a sus propios estudiantes: quedará marcado con pago externo y no se le generarán adeudos en Texcoco.</p>` : '';
+        if (d.bloqueo) {
+          $('#vpResultado').className = 'vp-resultado bloqueado';
+          $('#vpResultado').innerHTML = `<small>No se puede asignar</small><b>${textoSeguro(d.bloqueo)}</b>`;
+          return;
+        }
+        $('#vpResultado').innerHTML = `<small>Matrícula que se asignará</small><b>${textoSeguro(d.matricula)}</b>`;
+        btnConfirmar.disabled = false;
+      } catch (err) {
+        if (n !== consulta) return;
+        $('#vpResultado').innerHTML = '<small>Matrícula que se asignará</small><b>—</b>';
+        $('#vpError').textContent = err.message;
+      }
+    }
+
+    selAnio.addEventListener('change', actualizar);
+    selPeriodo.addEventListener('change', actualizar);
+
+    btnConfirmar.addEventListener('click', async () => {
+      enviando = true;
+      btnConfirmar.disabled = true;
+      btnConfirmar.textContent = 'Asignando…';
+      $('#vpError').textContent = '';
+      try {
+        const resp = await fetch(`/api/matricular/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ anio: selAnio.value, periodo: selPeriodo.value }),
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(data.error || 'No se pudo matricular');
+        enviando = false;
+        cerrar();
+        alert(`Estudiante matriculado.\\nMatrícula asignada: ${data.matricula}`);
+        cargar();
+      } catch (err) {
+        enviando = false;
+        $('#vpError').textContent = err.message;
+        btnConfirmar.textContent = 'Confirmar y asignar';
+        btnConfirmar.disabled = false;
+      }
+    });
+
+    actualizar();
+    selPeriodo.focus();
+  }
+
   function construirParams() {
     const params = new URLSearchParams();
     if (qInput.value) params.set('q', qInput.value);
@@ -144,33 +287,7 @@
     }
 
     if (btn.dataset.action === 'matricular') {
-      // Se proponen el año y el periodo actuales; el personal puede cambiarlos.
-      const hoy = new Date();
-      const periodoActual = String(Math.floor(hoy.getMonth() / 4) + 1);
-      const anio = prompt('Año de ingreso (ej. 2026):', String(hoy.getFullYear()));
-      if (!anio) return;
-      const periodo = prompt('Periodo (1 = Ene-Abr, 2 = May-Ago, 3 = Sep-Dic):', periodoActual);
-      if (!periodo || !['1', '2', '3'].includes(periodo.trim())) {
-        alert('El periodo debe ser 1, 2 o 3.');
-        return;
-      }
-      btn.disabled = true;
-      btn.textContent = 'Matriculando...';
-      try {
-        const resp = await fetch(`/api/matricular/${id}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ anio: anio.trim(), periodo: periodo.trim() }),
-        });
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'No se pudo matricular');
-        alert(`Estudiante matriculado con éxito.\nMatrícula asignada: ${data.matricula}`);
-        cargar();
-      } catch (err) {
-        alert('Error: ' + err.message);
-        btn.disabled = false;
-        btn.textContent = 'Asignar matrícula';
-      }
+      abrirVistaPreviaMatricula(id);
       return;
     }
 
