@@ -8,7 +8,7 @@
 
   // Un trámite de Titulación y Posgrados: abre la misma sección, ya filtrada por tipo
   const tramite = (tipo, titulo, desc, color) => ({
-    seccion: 'seccion-tramites', grupo: 'Departamento de Titulación y Posgrados',
+    clave: tipo, seccion: 'seccion-tramites', grupo: 'Departamento de Titulación y Posgrados',
     titulo, desc, icono: 'certificado', color,
     alAbrir: () => {
       document.getElementById('trTituloSeccion').textContent = titulo;
@@ -25,6 +25,7 @@
 
   const RECUADROS = [
     {
+      clave: 'inscripcion',
       seccion: 'seccion-fichas',
       grupo: 'Departamento de Control Escolar',
       titulo: 'Inscripción',
@@ -110,5 +111,11 @@
 
   pintarTablero();
   mostrarTablero();
-  window.tableroMatriculacion = { mostrarTablero, actualizarIndicadores };
+  // SIASE usa abrirSeccion() para llevar directo a una sección desde sus avisos:
+  // 'inscripcion' o el tipo de trámite ('licenciatura', 'maestria', 'doctorado').
+  function abrirSeccion(clave) {
+    const i = RECUADROS.findIndex((r) => r.clave === clave);
+    if (i >= 0) abrir(i); else mostrarTablero();
+  }
+  window.tableroMatriculacion = { mostrarTablero, actualizarIndicadores, abrir, abrirSeccion };
 })();
