@@ -13,6 +13,7 @@
   const ESTADO_DOC = {
     en_revision: ['En revisión', 'tr-azul'], verificado: ['Verificado', 'tr-verde'], no_cumple: ['No cumple', 'tr-rojo'],
     pendiente: ['Pendiente', 'tr-gris'], en_proceso: ['En elaboración', 'tr-azul'], listo: ['Listo', 'tr-verde'],
+    sin_cargar: ['Sin cargar', 'tr-gris'],
   };
 
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -49,6 +50,7 @@
             ${chip(ESTADO_TRAMITE[t.estado] || [t.estado, 'tr-gris'])}
             ${t.por_revisar ? `<span class="tr-chip tr-ambar">${t.por_revisar} por revisar</span>` : ''}
             ${t.no_cumplen ? `<span class="tr-chip tr-rojo">${t.no_cumplen} no cumple${t.no_cumplen === 1 ? '' : 'n'}</span>` : ''}
+            ${t.sin_cargar ? `<span class="tr-chip tr-gris">${t.sin_cargar} sin cargar</span>` : ''}
             ${t.internos_pendientes ? `<span class="tr-chip tr-gris">${t.internos_pendientes} interno${t.internos_pendientes === 1 ? '' : 's'} pendiente${t.internos_pendientes === 1 ? '' : 's'}</span>` : ''}
             <button type="button" class="btn-mini btn-principal tr-abrir" data-id="${t.id}">Revisar</button>
           </div>
@@ -93,7 +95,7 @@
           ${d.motivo ? `<p class="tr-motivo">Motivo: ${esc(d.motivo)}</p>` : ''}
           <div class="tr-doc-acciones">
             ${d.url ? `<a class="btn-mini tr-ver" href="${esc(d.url)}" target="_blank" rel="noopener">Ver PDF</a>` : '<span class="tr-vacio">Sin archivo</span>'}
-            ${t.estado === 'concluido' ? '' : `
+            ${t.estado === 'concluido' || d.estado === 'sin_cargar' ? '' : `
             <button type="button" class="btn-mini tr-ok" data-accion="verificado">Verificado</button>
             <button type="button" class="btn-mini tr-mal" data-accion="no_cumple">No cumple</button>`}
           </div>

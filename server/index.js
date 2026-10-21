@@ -31,6 +31,8 @@ const proteger = basicAuth({
 // Trámites de Titulación y Posgrados: administración (protegida) y formulario público.
 // La ruta de administración va antes de /api/fichas para que no la capture /api/fichas/:id.
 app.use('/api/fichas/tramites', proteger, tramitesAdmin);
+// Expediente Electrónico (Servicios Escolares): protegida con clave compartida, no con el usuario del panel.
+app.use('/api/integracion', require('./routes/integracion'));
 app.use('/api/tramites', tramitesPublico);
 
 // API pública: alta de una nueva ficha y subida de sus documentos (sin autenticación,

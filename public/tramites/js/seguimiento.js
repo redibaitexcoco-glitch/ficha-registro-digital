@@ -6,7 +6,7 @@
   const resultado = document.getElementById('resultado');
 
   const ESTADOS = {
-    en_revision: ['En revisión', 'revision'], verificado: ['Verificado', 'ok'], no_cumple: ['No cumple', 'mal'],
+    en_revision: ['En revisión', 'revision'], verificado: ['Verificado', 'ok'], no_cumple: ['No cumple', 'mal'], sin_cargar: ['Sin cargar (súbelo desde tu Expediente Electrónico)', 'revision'],
     pendiente: ['Pendiente', 'gris'], en_proceso: ['En elaboración', 'revision'], listo: ['Listo', 'ok'],
   };
   const GENERAL = {

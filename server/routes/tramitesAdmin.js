@@ -26,6 +26,7 @@ router.get('/', async (req, res) => {
       `SELECT t.id, t.folio, t.tipo, t.estado, t.plantel, t.primer_apellido, t.segundo_apellido, t.nombres, t.curp, t.matricula, t.created_at,
          COUNT(*) FILTER (WHERE NOT d.interno AND d.estado = 'en_revision')::int AS por_revisar,
          COUNT(*) FILTER (WHERE NOT d.interno AND d.estado = 'no_cumple')::int AS no_cumplen,
+         COUNT(*) FILTER (WHERE NOT d.interno AND d.estado = 'sin_cargar')::int AS sin_cargar,
          COUNT(*) FILTER (WHERE d.interno AND d.estado <> 'listo')::int AS internos_pendientes
        FROM tramites t LEFT JOIN tramite_documentos d ON d.tramite_id = t.id
        ${cond.length ? 'WHERE ' + cond.join(' AND ') : ''}
