@@ -34,7 +34,20 @@
 
   document.title = `${cfg.nombre} - Red IBAI Texcoco`;
   document.getElementById('tituloTramite').textContent = cfg.nombre;
-  document.getElementById('programa').value = cfg.programaSugerido || '';
+  const campoPrograma = document.getElementById('programa');
+  if (cfg.programas && cfg.programas.length) {
+    // Maestría y Doctorado: el programa se elige de una lista filtrada según el trámite.
+    const selPrograma = document.createElement('select');
+    selPrograma.id = 'programa';
+    selPrograma.name = 'programa';
+    selPrograma.required = true;
+    selPrograma.add(new Option('Selecciona un programa', ''));
+    cfg.programas.forEach((p) => selPrograma.add(new Option(p, p)));
+    if (cfg.programas.length === 1) selPrograma.value = cfg.programas[0];
+    campoPrograma.replaceWith(selPrograma);
+  } else {
+    campoPrograma.value = cfg.programaSugerido || '';
+  }
   const selPlantel = document.getElementById('plantel');
   cfg.planteles.forEach((p) => selPlantel.add(new Option(p, p)));
 

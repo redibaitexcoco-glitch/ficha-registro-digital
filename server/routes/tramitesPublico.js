@@ -7,11 +7,8 @@ const { TIPOS } = require('../tramites/config');
 const { recibirArchivos, esPdf, limpiar, aMayusculasSinAcentos, recalcularEstado } = require('../tramites/comun');
 const { obtenerOCrearCarpetaEstudiante, subirArchivo, nombreSeguro } = require('../services/googleDrive');
 
-const PLANTELES_VALIDOS = [
-  'Red IBAI Texcoco', 'Módulo Ecatepec', 'Módulo San Felipe del Progreso', 'Red IBAI Tapachula',
-  'Red IBAI Cacahoatán', 'Red IBAI Comitán', 'Red IBAI Mazatán', 'Red IBAI Motozintla',
-  'Red IBAI Pijijiapan', 'Red IBAI Tapachula Ciencias de la Educación',
-];
+// Los trámites de titulación y grado se gestionan solo desde la sede.
+const PLANTELES_VALIDOS = ['Red IBAI Texcoco'];
 const CURP_FORMATO = /^[A-Z]{4}\d{6}[HMX][A-Z]{2}[A-Z]{3}[A-Z0-9]\d$/;
 const ETIQUETA_TIPO = { licenciatura: 'TitulacionLicenciatura', maestria: 'GradoMaestria', doctorado: 'GradoDoctorado' };
 
@@ -35,12 +32,13 @@ router.post('/', recibirArchivos, async (req, res) => {
   if (!cfg) return res.status(400).json({ error: 'El tipo de trámite no es válido.' });
 
   const curp = (limpiar(b.curp) || '').toUpperCase().replace(/\s/g, '');
-  const requeridos = { primer_apellido: 'Primer apellido', nombres: 'Nombre(s)', tel_celular: 'Tel. celular', correo_electronico: 'Correo electrónico', programa: 'Programa cursado', periodo_egreso: 'Periodo de egreso', modalidad: 'Modalidad' };
+  const requeridos = { primer_apellido: 'Primer apellido', nombres: 'Nombre(s)', tel_celular: 'Tel. celular', correo_electronico: 'Correo electrónico', programa: 'Nombre del programa académico que concluye satisfactoriamente', periodo_egreso: 'Periodo de egreso', modalidad: 'Modalidad' };
   for (const [campo, nombre] of Object.entries(requeridos)) {
     if (!limpiar(b[campo])) return res.status(400).json({ error: `El campo "${nombre}" es obligatorio.` });
   }
   if (!CURP_FORMATO.test(curp)) return res.status(400).json({ error: 'La CURP no tiene un formato válido.' });
   if (!PLANTELES_VALIDOS.includes(b.plantel)) return res.status(400).json({ error: 'El plantel seleccionado no es válido.' });
+  if (cfg.programas && !cfg.programas.includes(limpiar(b.programa))) return res.status(400).json({ error: 'El programa seleccionado no es válido para este trámite.' });
   if (!['con_tesis', 'sin_tesis'].includes(b.modalidad)) return res.status(400).json({ error: 'Selecciona la modalidad.' });
   if (b.acepto !== 'true') return res.status(400).json({ error: 'Debes confirmar que la información y los documentos son verídicos.' });
 

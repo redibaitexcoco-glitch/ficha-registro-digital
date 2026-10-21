@@ -59,6 +59,20 @@
 
   actualizarFechaFirma();
 
+  // Los trámites de titulación y grado se capturan en su propio asistente.
+  const TRAMITES_ASISTENTE = {
+    'Titulación Licenciatura': 'licenciatura',
+    'Grado Maestría': 'maestria',
+    'Grado Doctorado': 'doctorado',
+  };
+  const selectTramite = document.getElementById('tramite');
+  if (selectTramite) {
+    selectTramite.addEventListener('change', () => {
+      const tipo = TRAMITES_ASISTENTE[selectTramite.value];
+      if (tipo) window.location.href = `/tramites/grado.html?tipo=${tipo}`;
+    });
+  }
+
   // Campos de documento: id del <input type="file"> en el HTML -> nombre que espera el servidor.
   const CAMPOS_DOCUMENTO = [
     { inputId: 'doc_acta', campo: 'acta_nacimiento' },

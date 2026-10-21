@@ -29,6 +29,7 @@ const TIPOS = {
     nombre: 'Grado Maestría',
     nivel: 'Maestría',
     programaSugerido: 'Maestría en Educación',
+    programas: ['Maestría en Educación'],
     documentos: [
       ...IDENTIFICACION,
       { clave: 'cert_licenciatura', etiqueta: 'Certificado de estudios de licenciatura', grupo: 'Antecedentes académicos' },
@@ -46,6 +47,7 @@ const TIPOS = {
     nombre: 'Grado Doctorado',
     nivel: 'Doctorado',
     programaSugerido: 'Doctorado en Educación',
+    programas: ['Doctorado en Educación'],
     documentos: [
       ...IDENTIFICACION,
       { clave: 'cert_maestria', etiqueta: 'Certificado de estudios de maestría', grupo: 'Antecedentes académicos' },

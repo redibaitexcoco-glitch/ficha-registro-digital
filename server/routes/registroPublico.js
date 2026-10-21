@@ -19,11 +19,9 @@ const TRAMITES_VALIDOS = [
   'Reinscripción',
   'Baja definitiva',
   'Baja temporal',
-  'Titulación Licenciatura',
-  'Grado Maestría',
-  'Grado Doctorado',
-  'Posdoctorado',
 ];
+// Titulación Licenciatura, Grado Maestría y Grado Doctorado se registran en
+// su propio asistente (/tramites/grado.html), no en esta ficha.
 
 const PROGRAMAS_VALIDOS = [
   'Maestría en Educación (No escolarizado)',
