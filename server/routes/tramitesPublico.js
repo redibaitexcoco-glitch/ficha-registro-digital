@@ -32,7 +32,9 @@ router.post('/', recibirArchivos, async (req, res) => {
   if (!cfg) return res.status(400).json({ error: 'El tipo de trámite no es válido.' });
 
   const curp = (limpiar(b.curp) || '').toUpperCase().replace(/\s/g, '');
-  const requeridos = { primer_apellido: 'Primer apellido', nombres: 'Nombre(s)', tel_celular: 'Tel. celular', correo_electronico: 'Correo electrónico', programa: 'Nombre del programa académico que concluye satisfactoriamente', periodo_egreso: 'Periodo de egreso', modalidad: 'Modalidad' };
+  const requeridos = { primer_apellido: 'Primer apellido', nombres: 'Nombre(s)', tel_celular: 'Tel. celular', correo_electronico: 'Correo electrónico', programa: 'Nombre del programa académico que concluye satisfactoriamente', periodo_ingreso: 'Periodo de ingreso', periodo_egreso: 'Periodo de egreso' };
+  // Maestría y Doctorado: siempre sin tesis y sin título de trabajo
+  if (cfg.modalidadFija) { b.modalidad = cfg.modalidadFija; b.titulo_trabajo = ''; }
   for (const [campo, nombre] of Object.entries(requeridos)) {
     if (!limpiar(b[campo])) return res.status(400).json({ error: `El campo "${nombre}" es obligatorio.` });
   }
@@ -77,12 +79,12 @@ router.post('/', recibirArchivos, async (req, res) => {
     const folio = `TRM-${String(consecutivo).padStart(4, '0')}/${anio}`;
     const { rows } = await client.query(
       `INSERT INTO tramites (anio, consecutivo, folio, tipo, plantel, primer_apellido, segundo_apellido, nombres, curp, matricula,
-         tel_celular, correo_electronico, programa, periodo_egreso, modalidad, titulo_trabajo, drive_folder_id)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING id`,
+         tel_celular, correo_electronico, programa, periodo_egreso, modalidad, titulo_trabajo, drive_folder_id, periodo_ingreso)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) RETURNING id`,
       [anio, consecutivo, folio, b.tipo, b.plantel, aMayusculasSinAcentos(b.primer_apellido), aMayusculasSinAcentos(b.segundo_apellido),
         aMayusculasSinAcentos(b.nombres), curp, (limpiar(b.matricula) || '').toUpperCase() || null, limpiar(b.tel_celular),
         limpiar(b.correo_electronico), aMayusculasSinAcentos(b.programa), limpiar(b.periodo_egreso), b.modalidad,
-        aMayusculasSinAcentos(b.titulo_trabajo), carpetaId]);
+        aMayusculasSinAcentos(b.titulo_trabajo), carpetaId, limpiar(b.periodo_ingreso)]);
     const id = rows[0].id;
     let orden = 0;
     for (const doc of cfg.documentos) {

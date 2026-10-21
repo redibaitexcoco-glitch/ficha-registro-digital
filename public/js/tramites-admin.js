@@ -79,7 +79,7 @@
         <div><small>Matrícula</small><b>${esc(t.matricula || '—')}</b></div>
         <div><small>Plantel</small><b>${esc(t.plantel || '—')}</b></div>
         <div><small>Programa</small><b>${esc(t.programa || '—')}</b></div>
-        <div><small>Egreso</small><b>${esc(t.periodo_egreso || '—')}</b></div>
+        <div><small>Ingreso · egreso</small><b>${esc(t.periodo_ingreso || '—')} · ${esc(t.periodo_egreso || '—')}</b></div>
         <div><small>Modalidad</small><b>${t.modalidad === 'con_tesis' ? 'Con tesis' : 'Sin tesis'}</b></div>
         <div><small>Contacto</small><b>${esc(t.tel_celular || '')} · ${esc(t.correo_electronico || '')}</b></div>
         ${t.titulo_trabajo ? `<div class="tr-ancho"><small>Título del trabajo</small><b>${esc(t.titulo_trabajo)}</b></div>` : ''}

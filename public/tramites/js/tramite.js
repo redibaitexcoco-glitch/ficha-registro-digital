@@ -48,6 +48,17 @@
   } else {
     campoPrograma.value = cfg.programaSugerido || '';
   }
+  // Maestría y Doctorado se obtienen sin tesis: la modalidad queda fija y no se pide título
+  if (cfg.modalidadFija) {
+    const selModalidad = document.getElementById('modalidad');
+    selModalidad.innerHTML = '';
+    selModalidad.add(new Option('Sin tesis', cfg.modalidadFija));
+    selModalidad.value = cfg.modalidadFija;
+    const titulo = document.getElementById('titulo_trabajo');
+    titulo.value = '';
+    titulo.disabled = true;
+    titulo.placeholder = 'No aplica: el grado se obtiene sin tesis';
+  }
   const selPlantel = document.getElementById('plantel');
   cfg.planteles.forEach((p) => selPlantel.add(new Option(p, p)));
 

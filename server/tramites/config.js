@@ -29,6 +29,7 @@ const TIPOS = {
     nombre: 'Grado Maestría',
     nivel: 'Maestría',
     programaSugerido: 'Maestría en Educación',
+    modalidadFija: 'sin_tesis', // Maestría y Doctorado se obtienen sin tesis
     programas: ['Maestría en Educación'],
     documentos: [
       ...IDENTIFICACION,
@@ -47,6 +48,7 @@ const TIPOS = {
     nombre: 'Grado Doctorado',
     nivel: 'Doctorado',
     programaSugerido: 'Doctorado en Educación',
+    modalidadFija: 'sin_tesis',
     programas: ['Doctorado en Educación'],
     documentos: [
       ...IDENTIFICACION,

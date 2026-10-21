@@ -127,6 +127,7 @@ CREATE TABLE IF NOT EXISTS tramites (
 );
 CREATE INDEX IF NOT EXISTS idx_tramites_curp ON tramites (curp);
 CREATE INDEX IF NOT EXISTS idx_tramites_estado ON tramites (estado);
+ALTER TABLE tramites ADD COLUMN IF NOT EXISTS periodo_ingreso VARCHAR(30);
 
 CREATE TABLE IF NOT EXISTS tramite_documentos (
     id             SERIAL PRIMARY KEY,

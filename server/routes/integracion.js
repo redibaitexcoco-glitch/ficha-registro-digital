@@ -34,7 +34,7 @@ async function tramiteConDocumentos(t) {
   const ayudaDe = Object.fromEntries(cfg.internos.map((d) => [d.clave, d.ayuda]));
   return {
     id: t.id, folio: t.folio, tipo: t.tipo, nombre_tramite: cfg.nombre || t.tipo, estado: t.estado,
-    programa: t.programa, periodo_egreso: t.periodo_egreso, modalidad: t.modalidad, titulo_trabajo: t.titulo_trabajo,
+    programa: t.programa, periodo_ingreso: t.periodo_ingreso, periodo_egreso: t.periodo_egreso, modalidad_fija: cfg.modalidadFija || null, modalidad: t.modalidad, titulo_trabajo: t.titulo_trabajo,
     tel_celular: t.tel_celular, correo_electronico: t.correo_electronico, observaciones: t.observaciones, creado: t.created_at,
     documentos: docs.map((d) => ({ ...d, grupo: grupoDe[d.clave] || null, ayuda: ayudaDe[d.clave] || null })),
   };
@@ -63,6 +63,7 @@ router.post('/tramites', async (req, res) => {
   for (const [campo, nombre] of Object.entries(requeridos)) {
     if (!limpiar(b[campo])) return res.status(400).json({ error: `El campo "${nombre}" es obligatorio.` });
   }
+  if (cfg.modalidadFija) { b.modalidad = cfg.modalidadFija; b.titulo_trabajo = ''; }
   if (!['con_tesis', 'sin_tesis'].includes(b.modalidad)) return res.status(400).json({ error: 'Selecciona la modalidad.' });
   const client = await pool.connect();
   try {
@@ -79,11 +80,11 @@ router.post('/tramites', async (req, res) => {
     const folio = `TRM-${String(consecutivo).padStart(4, '0')}/${anio}`;
     const { rows } = await client.query(
       `INSERT INTO tramites (anio, consecutivo, folio, tipo, plantel, primer_apellido, segundo_apellido, nombres, curp, matricula,
-         tel_celular, correo_electronico, programa, periodo_egreso, modalidad, titulo_trabajo)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *`,
+         tel_celular, correo_electronico, programa, periodo_egreso, modalidad, titulo_trabajo, periodo_ingreso)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING *`,
       [anio, consecutivo, folio, b.tipo, PLANTEL, aMayusculasSinAcentos(b.primer_apellido), aMayusculasSinAcentos(b.segundo_apellido),
         aMayusculasSinAcentos(b.nombres), curp, (limpiar(b.matricula) || '').toUpperCase() || null, limpiar(b.tel_celular),
-        limpiar(b.correo_electronico), aMayusculasSinAcentos(b.programa), limpiar(b.periodo_egreso), b.modalidad, aMayusculasSinAcentos(b.titulo_trabajo)]);
+        limpiar(b.correo_electronico), aMayusculasSinAcentos(b.programa), limpiar(b.periodo_egreso), b.modalidad, aMayusculasSinAcentos(b.titulo_trabajo), limpiar(b.periodo_ingreso)]);
     let orden = 0;
     for (const doc of cfg.documentos) {
       await client.query(`INSERT INTO tramite_documentos (tramite_id, clave, etiqueta, interno, orden, estado) VALUES ($1,$2,$3,false,$4,'sin_cargar')`,
@@ -112,6 +113,8 @@ router.patch('/tramites/:id(\\d+)', async (req, res) => {
     const t = rows[0];
     if (!t) return res.status(404).json({ error: 'Trámite no encontrado.' });
     if (t.estado === 'concluido') return res.status(409).json({ error: 'El trámite ya está concluido.' });
+    const cfgT = TIPOS[t.tipo] || {};
+    if (cfgT.modalidadFija) { b.modalidad = cfgT.modalidadFija; b.titulo_trabajo = null; }
     if (b.modalidad && !['con_tesis', 'sin_tesis'].includes(b.modalidad)) return res.status(400).json({ error: 'Modalidad no válida.' });
     const { rows: act } = await pool.query(
       `UPDATE tramites SET tel_celular = COALESCE($1, tel_celular), correo_electronico = COALESCE($2, correo_electronico),
