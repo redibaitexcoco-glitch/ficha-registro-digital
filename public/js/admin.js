@@ -254,6 +254,9 @@
     render(fichas);
   }
 
+  let fichasPorId = new Map();
+  const NOMBRE_DOC = { Acta: 'tu Acta de nacimiento', CURP: 'tu CURP', INE: 'tu INE', Certificado: 'tu Certificado de estudios', 'Título': 'tu Título', 'Cédula': 'tu Cédula profesional', Foto: 'tu Fotografía' };
+
   function render(fichas) {
     const contador = document.getElementById('fichasContador');
     if (contador) {
@@ -276,6 +279,7 @@
     }
     const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const opcionesSituacion = ['Inscrito', 'Baja', 'Baja temporal', 'Concluido [Programa Académico]', 'En Proceso [Título o Grado]', 'Entregado [Título o Grado]'];
+    fichasPorId = new Map(fichas.map((f) => [String(f.id), f]));
     tbody.innerHTML = fichas.map((f) => {
       const nombre = [f.primer_apellido, f.segundo_apellido, f.nombres].filter(Boolean).join(' ');
       const ini = ((f.nombres || '').charAt(0) + (f.primer_apellido || '').charAt(0)).toUpperCase();
@@ -305,6 +309,7 @@
             <details class="ficha-menu">
               <summary aria-label="Más acciones">⋯</summary>
               <div>
+                ${f.tel_celular ? `<button class="btn-mini" data-id="${f.id}" data-action="whatsapp">Enviar WhatsApp</button>` : ''}
                 <button class="btn-mini" data-id="${f.id}" data-action="editar">Editar ficha</button>
                 ${f.matricula_asignada ? `<button class="btn-mini peligro" data-id="${f.id}" data-action="deshacer-matricula">Deshacer matrícula…</button>` : ''}
                 <button class="btn-mini peligro" data-id="${f.id}" data-action="eliminar">Eliminar ficha…</button>
@@ -324,6 +329,18 @@
 
     if (btn.dataset.action === 'editar') {
       abrirModalEditar(id);
+      return;
+    }
+
+    if (btn.dataset.action === 'whatsapp') {
+      const f = fichasPorId.get(String(id));
+      if (!f || !window.WhatsApp) return;
+      WhatsApp.abrir({
+        nombres: f.nombres, nombreCompleto: [f.primer_apellido, f.segundo_apellido, f.nombres].filter(Boolean).join(' '),
+        telefono: f.tel_celular, curp: f.curp, matricula: f.matricula_asignada,
+        faltantes: DOCUMENTOS_CHECKLIST.filter(({ campo }) => !f[campo]).map(({ etiqueta }) => NOMBRE_DOC[etiqueta] || etiqueta),
+        plantilla: f.matricula_asignada ? 'acceso' : (DOCUMENTOS_CHECKLIST.some(({ campo }) => !f[campo]) ? 'documento' : 'saludo'),
+      });
       return;
     }
 
