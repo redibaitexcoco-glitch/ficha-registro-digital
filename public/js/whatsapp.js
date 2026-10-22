@@ -84,6 +84,19 @@
     return `<button type="button" class="wa-btn" data-wa="${esc(clave)}" title="Enviar mensaje por WhatsApp">${ICONO}WhatsApp</button>`;
   }
 
+  const esAndroid = /Android/i.test(navigator.userAgent);
+  const esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // Android: fuerza la app WhatsApp Business (paquete com.whatsapp.w4b).
+  // Computadora: WhatsApp Web o la aplicación de escritorio, según se elija.
+  function urlDestino(numero, mensaje, destino) {
+    const t = encodeURIComponent(mensaje);
+    if (esAndroid) return `intent://send?phone=${numero}&text=${t}#Intent;scheme=whatsapp;package=com.whatsapp.w4b;S.browser_fallback_url=${encodeURIComponent(`https://wa.me/${numero}?text=${t}`)};end`;
+    if (esMovil) return `https://wa.me/${numero}?text=${t}`;
+    if (destino === 'app') return `whatsapp://send?phone=${numero}&text=${t}`;
+    return `https://web.whatsapp.com/send?phone=${numero}&text=${t}`;
+  }
+
   function abrir(datos) {
     estilos();
     const numero = numeroWa(datos.telefono);
@@ -100,7 +113,12 @@
         <div class="wa-campos" id="waCampos"></div>
         <label for="waTexto">Texto (puedes editarlo)</label>
         <textarea id="waTexto"></textarea>
-        <p class="wa-nota">Se abrirá WhatsApp (Web o la app) con el mensaje escrito; revísalo y da Enviar.${numero ? '' : ' <b class="wa-error">Corrige el teléfono del estudiante (10 dígitos) para poder enviar.</b>'}</p>
+        ${esAndroid ? '' : `<label for="waDestino">Abrir con</label>
+        <select id="waDestino">
+          <option value="web">WhatsApp Web (navegador)</option>
+          <option value="app">Aplicación de escritorio de WhatsApp</option>
+        </select>`}
+        <p class="wa-nota">${esAndroid ? 'Se abrirá WhatsApp Business con el mensaje escrito' : 'Se abrirá con el mensaje escrito en la cuenta que tengas vinculada (para usar WhatsApp Business, vincula WhatsApp Web o la aplicación de escritorio con el número Business)'}; revísalo y da Enviar.${numero ? '' : ' <b class="wa-error">Corrige el teléfono del estudiante (10 dígitos) para poder enviar.</b>'}</p>
         <div class="wa-acc"><button type="button" class="wa-cancelar">Cancelar</button><button type="button" class="wa-abrir" ${numero ? '' : 'disabled'}>Abrir WhatsApp</button></div>
       </div>`;
     document.body.appendChild(fondo);
@@ -151,8 +169,21 @@
     sel.addEventListener('change', pintarCampos);
     if (datos.plantilla) sel.value = datos.plantilla;
     pintarCampos();
+    const destino = $('#waDestino');
+    if (destino) {
+      destino.value = guardado('destino') || 'web';
+      destino.addEventListener('change', () => guardar('destino', destino.value));
+    }
     $('.wa-abrir').addEventListener('click', () => {
-      window.open(`https://wa.me/${numero}?text=${encodeURIComponent(texto.value.trim())}`, '_blank', 'noopener');
+      const tipo = destino ? destino.value : 'web';
+      const url = urlDestino(numero, texto.value.trim(), tipo);
+      if (esAndroid || tipo === 'app') {
+        // Esquemas de app: se abren desde la pestaña principal (dentro de un marco a veces se bloquean)
+        try { (window.top || window).location.href = url; } catch (e) { window.location.href = url; }
+      } else {
+        // Reutiliza la misma pestaña de WhatsApp Web para no abrir una nueva cada vez
+        window.open(url, 'whatsapp_web');
+      }
       cerrar();
     });
     sel.focus();
