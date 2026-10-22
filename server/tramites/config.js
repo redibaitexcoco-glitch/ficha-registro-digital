@@ -16,7 +16,7 @@ const TIPOS = {
     documentos: [
       ...IDENTIFICACION,
       { clave: 'cert_bachillerato', etiqueta: 'Certificado de estudios de bachillerato', grupo: 'Antecedentes académicos' },
-      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de titulación', grupo: 'Obtención del título', opcional: true, ayuda: 'Opcional: puedes enviarlo después' },
+      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de titulación', grupo: 'Pago para gestión de título o grado', opcional: true, ayuda: 'Opcional: puedes enviarlo después' },
     ],
     internos: [
       { clave: 'tesis', etiqueta: 'Tesis o documento de Titulación sin Tesis', ayuda: 'Se integra desde el registro de tu modalidad de titulación' },
@@ -34,7 +34,7 @@ const TIPOS = {
       { clave: 'cert_licenciatura', etiqueta: 'Certificado de estudios de licenciatura', grupo: 'Antecedentes académicos' },
       { clave: 'titulo_licenciatura', etiqueta: 'Título de licenciatura', grupo: 'Antecedentes académicos' },
       { clave: 'cedula_licenciatura', etiqueta: 'Cédula profesional de licenciatura', grupo: 'Antecedentes académicos' },
-      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de grado', grupo: 'Obtención del grado', opcional: true, ayuda: 'Opcional: puedes enviarlo después' },
+      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de grado', grupo: 'Pago para gestión de título o grado', opcional: true, ayuda: 'Opcional: puedes enviarlo después' },
     ],
     internos: [
       { clave: 'tesis', etiqueta: 'Tesis o documento de Grado sin Tesis', ayuda: 'Se integra desde el registro de tu modalidad de grado' },
@@ -52,7 +52,7 @@ const TIPOS = {
       { clave: 'cert_maestria', etiqueta: 'Certificado de estudios de maestría', grupo: 'Antecedentes académicos' },
       { clave: 'grado_maestria', etiqueta: 'Grado de maestría', grupo: 'Antecedentes académicos' },
       { clave: 'cedula_maestria', etiqueta: 'Cédula de maestría', grupo: 'Antecedentes académicos' },
-      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de grado', grupo: 'Obtención del grado', opcional: true, ayuda: 'Opcional: puedes enviarlo después' },
+      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de grado', grupo: 'Pago para gestión de título o grado', opcional: true, ayuda: 'Opcional: puedes enviarlo después' },
     ],
     internos: [
       { clave: 'tesis', etiqueta: 'Tesis o documento de Grado sin Tesis', ayuda: 'Se integra desde el registro de tu modalidad de grado' },
