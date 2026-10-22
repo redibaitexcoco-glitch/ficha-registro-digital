@@ -1,6 +1,6 @@
 // Mensajes por WhatsApp (envío manual): arma el texto con una plantilla y abre
 // WhatsApp Web o la app con el mensaje escrito; la persona revisa y da Enviar.
-// Uso: WhatsApp.abrir({ nombre, telefono, curp, matricula, materias: [], pagos: [], faltantes: [] })
+// Uso: WhatsApp.abrir({ nombre, telefono, curp, matricula, materias: [], pagos: [], faltantes: [], plantilla, valores: {} })
 (function () {
   const EXPEDIENTE_URL = 'https://serviciosescolares.redibaiconnect.org/portal/';
   const FICHA_URL = 'https://ficha-registro-digital.onrender.com/';
@@ -107,7 +107,7 @@
     const $ = (s) => fondo.querySelector(s);
     const sel = $('#waPlantilla');
     const texto = $('#waTexto');
-    const valores = {};
+    const valores = { ...(datos.valores || {}) };
 
     const cerrar = () => { fondo.remove(); document.removeEventListener('keydown', teclas); };
     const teclas = (e) => { if (e.key === 'Escape') cerrar(); };
