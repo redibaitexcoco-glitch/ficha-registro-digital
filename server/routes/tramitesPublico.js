@@ -49,6 +49,7 @@ router.post('/', recibirArchivos, async (req, res) => {
   for (const f of req.files || []) archivos[f.fieldname] = f;
   for (const doc of cfg.documentos) {
     const a = archivos[doc.clave];
+    if (!a && doc.opcional) continue;
     if (!a) return res.status(400).json({ error: `Falta el documento "${doc.etiqueta}".` });
     if (!esPdf(a)) return res.status(400).json({ error: `"${doc.etiqueta}" debe ser un PDF escaneado. No se aceptan fotografías.` });
   }
@@ -61,6 +62,7 @@ router.post('/', recibirArchivos, async (req, res) => {
       curp, primerApellido: aMayusculasSinAcentos(b.primer_apellido), segundoApellido: aMayusculasSinAcentos(b.segundo_apellido), nombres: aMayusculasSinAcentos(b.nombres),
     });
     for (const doc of cfg.documentos) {
+      if (!archivos[doc.clave]) continue; // opcional no adjuntado
       subidos[doc.clave] = await subirDocumentoDrive({ archivo: archivos[doc.clave], carpetaId, curp, tipo: b.tipo, clave: doc.clave, version: 1 });
     }
   } catch (err) {
@@ -88,10 +90,11 @@ router.post('/', recibirArchivos, async (req, res) => {
     const id = rows[0].id;
     let orden = 0;
     for (const doc of cfg.documentos) {
+      const sub = subidos[doc.clave];
       await client.query(
         `INSERT INTO tramite_documentos (tramite_id, clave, etiqueta, interno, orden, estado, drive_file_id, nombre_archivo)
-         VALUES ($1,$2,$3,false,$4,'en_revision',$5,$6)`,
-        [id, doc.clave, doc.etiqueta, orden++, subidos[doc.clave].fileId, subidos[doc.clave].nombreArchivo]);
+         VALUES ($1,$2,$3,false,$4,$5,$6,$7)`,
+        [id, doc.clave, doc.etiqueta, orden++, sub ? 'en_revision' : 'sin_cargar', sub ? sub.fileId : null, sub ? sub.nombreArchivo : null]);
     }
     for (const doc of cfg.internos) {
       await client.query(
@@ -146,13 +149,13 @@ router.post('/reenviar', recibirArchivos, async (req, res) => {
       'SELECT id, version, estado FROM tramite_documentos WHERE tramite_id = $1 AND clave = $2 AND interno = false', [t.id, req.body.clave]);
     const doc = rows[0];
     if (!doc) return res.status(404).json({ error: 'Documento no encontrado.' });
-    if (doc.estado !== 'no_cumple') return res.status(409).json({ error: 'Este documento no requiere corrección.' });
+    if (!['no_cumple', 'sin_cargar'].includes(doc.estado)) return res.status(409).json({ error: 'Este documento no requiere corrección.' });
     let carpetaId = t.drive_folder_id;
     if (!carpetaId) {
       carpetaId = await obtenerOCrearCarpetaEstudiante({ curp: t.curp, primerApellido: t.primer_apellido, segundoApellido: t.segundo_apellido, nombres: t.nombres });
       await pool.query('UPDATE tramites SET drive_folder_id = $1 WHERE id = $2', [carpetaId, t.id]);
     }
-    const version = doc.version + 1;
+    const version = doc.estado === 'sin_cargar' ? 1 : doc.version + 1;
     const subido = await subirDocumentoDrive({ archivo, carpetaId, curp: t.curp, tipo: t.tipo, clave: req.body.clave, version });
     await pool.query(
       `UPDATE tramite_documentos SET drive_file_id = $1, nombre_archivo = $2, version = $3, estado = 'en_revision', motivo = NULL,

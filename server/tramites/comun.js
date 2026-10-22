@@ -33,8 +33,15 @@ function aMayusculasSinAcentos(valor) {
 
 // Estado general del trámite a partir del estado de sus documentos
 async function recalcularEstado(db, tramiteId) {
-  const { rows } = await db.query('SELECT interno, estado FROM tramite_documentos WHERE tramite_id = $1', [tramiteId]);
-  const { rows: t } = await db.query('SELECT estado FROM tramites WHERE id = $1', [tramiteId]);
+  const { rows: todos } = await db.query('SELECT clave, interno, estado FROM tramite_documentos WHERE tramite_id = $1', [tramiteId]);
+  const { rows: t } = await db.query('SELECT estado, tipo FROM tramites WHERE id = $1', [tramiteId]);
+  // No cuentan: documentos opcionales sin cargar y documentos que ya no se piden (por ejemplo, la INE)
+  const cfg = (require('./config').TIPOS[t[0] && t[0].tipo]) || { documentos: [] };
+  const pedidos = new Map(cfg.documentos.map((d) => [d.clave, d]));
+  const internos = new Set((cfg.internos || []).map((d) => d.clave));
+  // Internos que ya no se gestionan (por ejemplo, el certificado de terminación) tampoco cuentan
+  const rows = todos.filter((d) => (d.interno ? internos.has(d.clave) || !(cfg.internos || []).length
+    : !(d.estado === 'sin_cargar' && (!pedidos.has(d.clave) || pedidos.get(d.clave).opcional))));
   if (!t[0] || t[0].estado === 'concluido') return t[0] && t[0].estado;
   let estado = 'en_revision';
   if (rows.some((d) => !d.interno && d.estado === 'no_cumple')) estado = 'con_observaciones';

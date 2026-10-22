@@ -31,12 +31,13 @@ async function tramiteConDocumentos(t) {
     'SELECT clave, etiqueta, interno, estado, motivo, version, actualizado_en FROM tramite_documentos WHERE tramite_id = $1 ORDER BY interno, orden', [t.id]);
   const cfg = TIPOS[t.tipo] || { documentos: [], internos: [] };
   const grupoDe = Object.fromEntries(cfg.documentos.map((d) => [d.clave, d.grupo]));
+  const opcional = new Set(cfg.documentos.filter((d) => d.opcional).map((d) => d.clave));
   const ayudaDe = Object.fromEntries(cfg.internos.map((d) => [d.clave, d.ayuda]));
   return {
     id: t.id, folio: t.folio, tipo: t.tipo, nombre_tramite: cfg.nombre || t.tipo, estado: t.estado,
     programa: t.programa, periodo_ingreso: t.periodo_ingreso, periodo_egreso: t.periodo_egreso, modalidad_fija: cfg.modalidadFija || null, modalidad: t.modalidad, titulo_trabajo: t.titulo_trabajo,
     tel_celular: t.tel_celular, correo_electronico: t.correo_electronico, observaciones: t.observaciones, creado: t.created_at,
-    documentos: docs.map((d) => ({ ...d, grupo: grupoDe[d.clave] || null, ayuda: ayudaDe[d.clave] || null })),
+    documentos: docs.map((d) => ({ ...d, grupo: grupoDe[d.clave] || null, ayuda: ayudaDe[d.clave] || null, opcional: opcional.has(d.clave) })),
   };
 }
 

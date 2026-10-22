@@ -86,9 +86,9 @@
     const caja = document.createElement('div');
     caja.className = 'documento';
     caja.innerHTML = `<label for="doc_${d.clave}" class="etiqueta"></label>
-      <input type="file" id="doc_${d.clave}" name="${d.clave}" accept="application/pdf,.pdf">
-      <span class="estado-archivo">Ningún archivo seleccionado</span>`;
-    caja.querySelector('label').textContent = `${d.etiqueta} *`;
+      <input type="file" id="doc_${d.clave}" name="${d.clave}" accept="application/pdf,.pdf" ${d.opcional ? 'data-opcional="1"' : ''}>
+      <span class="estado-archivo">${d.opcional ? 'Opcional: puedes enviarlo después desde el seguimiento' : 'Ningún archivo seleccionado'}</span>`;
+    caja.querySelector('label').textContent = d.opcional ? `${d.etiqueta} (opcional)` : `${d.etiqueta} *`;
     listaDocs.appendChild(caja);
     const li = document.createElement('li');
     li.textContent = d.etiqueta;
@@ -134,7 +134,7 @@
   // Revisa que sea un PDF real (empieza con %PDF) y no una imagen renombrada
   async function errorDeArchivo(input) {
     const a = input.files[0];
-    if (!a) return 'Este documento es obligatorio.';
+    if (!a) return input.dataset.opcional ? null : 'Este documento es obligatorio.';
     if (!/\.pdf$/i.test(a.name)) return 'Solo se aceptan archivos PDF escaneados. Las fotografías (JPG, PNG, HEIC) no se aceptan.';
     if (a.size > TAMANO_MAXIMO) return 'El archivo supera los 5 MB permitidos.';
     const cabecera = await a.slice(0, 5).text().catch(() => '');

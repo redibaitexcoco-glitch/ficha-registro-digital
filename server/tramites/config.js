@@ -6,7 +6,6 @@
 const IDENTIFICACION = [
   { clave: 'acta_nacimiento', etiqueta: 'Acta de nacimiento', grupo: 'Identificación (por separado)' },
   { clave: 'curp', etiqueta: 'CURP', grupo: 'Identificación (por separado)' },
-  { clave: 'ine', etiqueta: 'INE (ambos lados en un solo PDF)', grupo: 'Identificación (por separado)' },
 ];
 
 const TIPOS = {
@@ -17,12 +16,11 @@ const TIPOS = {
     documentos: [
       ...IDENTIFICACION,
       { clave: 'cert_bachillerato', etiqueta: 'Certificado de estudios de bachillerato', grupo: 'Antecedentes académicos' },
-      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de titulación', grupo: 'Obtención del título' },
+      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de titulación', grupo: 'Obtención del título', opcional: true, ayuda: 'Opcional: puedes enviarlo después' },
     ],
     internos: [
       { clave: 'tesis', etiqueta: 'Tesis o documento de Titulación sin Tesis', ayuda: 'Se integra desde el registro de tu modalidad de titulación' },
       { clave: 'no_adeudo', etiqueta: 'Constancia de no adeudo', ayuda: 'Se verifica con tu estado de cuenta' },
-      { clave: 'cert_terminacion', etiqueta: 'Certificado de terminación de estudios de Licenciatura', ayuda: 'Se emite desde tu historial académico' },
     ],
   },
   maestria: {
@@ -36,12 +34,11 @@ const TIPOS = {
       { clave: 'cert_licenciatura', etiqueta: 'Certificado de estudios de licenciatura', grupo: 'Antecedentes académicos' },
       { clave: 'titulo_licenciatura', etiqueta: 'Título de licenciatura', grupo: 'Antecedentes académicos' },
       { clave: 'cedula_licenciatura', etiqueta: 'Cédula profesional de licenciatura', grupo: 'Antecedentes académicos' },
-      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de grado', grupo: 'Obtención del grado' },
+      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de grado', grupo: 'Obtención del grado', opcional: true, ayuda: 'Opcional: puedes enviarlo después' },
     ],
     internos: [
       { clave: 'tesis', etiqueta: 'Tesis o documento de Grado sin Tesis', ayuda: 'Se integra desde el registro de tu modalidad de grado' },
       { clave: 'no_adeudo', etiqueta: 'Constancia de no adeudo', ayuda: 'Se verifica con tu estado de cuenta' },
-      { clave: 'cert_terminacion', etiqueta: 'Certificado de terminación de estudios de Maestría', ayuda: 'Se emite desde tu historial académico' },
     ],
   },
   doctorado: {
@@ -55,12 +52,11 @@ const TIPOS = {
       { clave: 'cert_maestria', etiqueta: 'Certificado de estudios de maestría', grupo: 'Antecedentes académicos' },
       { clave: 'grado_maestria', etiqueta: 'Grado de maestría', grupo: 'Antecedentes académicos' },
       { clave: 'cedula_maestria', etiqueta: 'Cédula de maestría', grupo: 'Antecedentes académicos' },
-      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de grado', grupo: 'Obtención del grado' },
+      { clave: 'comprobante_pago', etiqueta: 'Comprobante de pago de derechos de grado', grupo: 'Obtención del grado', opcional: true, ayuda: 'Opcional: puedes enviarlo después' },
     ],
     internos: [
       { clave: 'tesis', etiqueta: 'Tesis o documento de Grado sin Tesis', ayuda: 'Se integra desde el registro de tu modalidad de grado' },
       { clave: 'no_adeudo', etiqueta: 'Constancia de no adeudo', ayuda: 'Se verifica con tu estado de cuenta' },
-      { clave: 'cert_terminacion', etiqueta: 'Certificado de terminación de estudios de Doctorado', ayuda: 'Se emite desde tu historial académico' },
     ],
   },
 };

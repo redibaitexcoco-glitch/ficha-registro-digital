@@ -6,7 +6,7 @@
   const resultado = document.getElementById('resultado');
 
   const ESTADOS = {
-    en_revision: ['En revisión', 'revision'], verificado: ['Verificado', 'ok'], no_cumple: ['No cumple', 'mal'], sin_cargar: ['Sin cargar (súbelo desde tu Expediente Electrónico)', 'revision'],
+    en_revision: ['En revisión', 'revision'], verificado: ['Verificado', 'ok'], no_cumple: ['No cumple', 'mal'], sin_cargar: ['Por subir', 'revision'],
     pendiente: ['Pendiente', 'gris'], en_proceso: ['En elaboración', 'revision'], listo: ['Listo', 'ok'],
   };
   const GENERAL = {
@@ -61,13 +61,13 @@
       const n = document.createElement('span');
       n.textContent = doc.etiqueta;
       fila.append(n, chip(doc.estado));
-      if (doc.estado === 'no_cumple') {
+      if (doc.estado === 'no_cumple' || (doc.estado === 'sin_cargar' && !doc.interno)) {
         const m = document.createElement('p');
         m.className = 'motivo';
-        m.textContent = `Motivo: ${doc.motivo || 'no especificado'}`;
+        m.textContent = doc.estado === 'no_cumple' ? `Motivo: ${doc.motivo || 'no especificado'}` : 'Aún no se ha enviado este documento.';
         const zona = document.createElement('div');
         zona.className = 'reenviar';
-        zona.innerHTML = '<input type="file" accept="application/pdf,.pdf"><button type="button" class="btn btn-primario">Subir de nuevo</button><span class="ayuda"></span>';
+        zona.innerHTML = `<input type="file" accept="application/pdf,.pdf"><button type="button" class="btn btn-primario">${doc.estado === 'no_cumple' ? 'Subir de nuevo' : 'Subir'}</button><span class="ayuda"></span>`;
         const [input, btn, nota] = zona.children;
         input.setAttribute('aria-label', `Nuevo PDF de ${doc.etiqueta}`);
         btn.addEventListener('click', () => reenviar(doc.clave, input, btn, nota));

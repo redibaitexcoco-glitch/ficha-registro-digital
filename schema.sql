@@ -146,3 +146,8 @@ CREATE TABLE IF NOT EXISTS tramite_documentos (
     actualizado_en TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (tramite_id, clave)
 );
+
+-- La INE ya no se pide en los trámites de titulación y grado: se retiran las que nunca se subieron.
+DELETE FROM tramite_documentos WHERE clave = 'ine' AND interno = false AND estado = 'sin_cargar';
+-- El certificado de terminación ya no aparece entre los documentos que gestiona Servicios Escolares.
+DELETE FROM tramite_documentos WHERE clave = 'cert_terminacion' AND interno = true AND estado = 'pendiente';
