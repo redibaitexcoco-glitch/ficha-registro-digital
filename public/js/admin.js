@@ -89,6 +89,7 @@
     const btnConfirmar = $('#vpConfirmar');
     let consulta = 0;
     let enviando = false;
+    let existente = null; // matrícula ya registrada en SE para esta CURP
 
     const cerrar = () => { if (enviando) return; fondo.remove(); document.removeEventListener('keydown', teclas); };
     const teclas = (e) => { if (e.key === 'Escape') cerrar(); };
@@ -98,6 +99,8 @@
     async function actualizar() {
       const n = ++consulta;
       btnConfirmar.disabled = true;
+      existente = null;
+      btnConfirmar.textContent = 'Confirmar y asignar';
       $('#vpError').textContent = '';
       $('#vpResultado').className = 'vp-resultado';
       $('#vpResultado').innerHTML = '<small>Matrícula que se asignará</small><b>Calculando…</b>';
@@ -115,6 +118,13 @@
           ? `<p class="vp-aviso">${textoSeguro(d.plantel_pago_externo || d.plantel)} cobra a sus propios estudiantes: quedará marcado con pago externo y no se le generarán adeudos en Texcoco.</p>` : '';
         if (d.bloqueo) {
           $('#vpResultado').className = 'vp-resultado bloqueado';
+          if (d.existente) {
+            existente = d.existente;
+            $('#vpResultado').innerHTML = `<small>Matrícula ya registrada en Servicios Escolares</small><b>${textoSeguro(d.existente.matricula)}</b><span class="vp-sub">${textoSeguro(d.existente.nombre)} · se dio de alta manualmente</span>`;
+            btnConfirmar.textContent = 'Vincular esta matrícula';
+            btnConfirmar.disabled = false;
+            return;
+          }
           $('#vpResultado').innerHTML = `<small>No se puede asignar</small><b>${textoSeguro(d.bloqueo)}</b>`;
           return;
         }
@@ -131,6 +141,25 @@
     selPeriodo.addEventListener('change', actualizar);
 
     btnConfirmar.addEventListener('click', async () => {
+      if (existente) {
+        enviando = true;
+        btnConfirmar.disabled = true;
+        btnConfirmar.textContent = 'Vinculando…';
+        try {
+          const resp = await fetch(`/api/matricular/${id}/vincular`, { method: 'POST' });
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok) throw new Error(data.error || 'No se pudo vincular la matrícula');
+          enviando = false;
+          cerrar();
+          cargar();
+        } catch (err) {
+          enviando = false;
+          $('#vpError').textContent = err.message;
+          btnConfirmar.textContent = 'Vincular esta matrícula';
+          btnConfirmar.disabled = false;
+        }
+        return;
+      }
       enviando = true;
       btnConfirmar.disabled = true;
       btnConfirmar.textContent = 'Asignando…';
@@ -157,6 +186,27 @@
 
     actualizar();
     selPeriodo.focus();
+  }
+
+  async function vincularExistentes(e) {
+    const b = e.currentTarget;
+    if (!confirm('Se buscará por CURP en Servicios Escolares a cada ficha sin matrícula. Si el estudiante ya existe, su matrícula se anotará en la ficha (no se crea ni se modifica ningún estudiante). ¿Continuar?')) return;
+    b.disabled = true;
+    b.textContent = 'Vinculando…';
+    try {
+      const r = await fetch('/api/matricular/vincular-existentes', { method: 'POST' });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || 'No se pudieron vincular las matrículas');
+      const lista = d.vinculadas.map((v) => `• ${v.nombre}: ${v.matricula}`).join('\n');
+      alert(d.vinculadas.length
+        ? `Se vincularon ${d.vinculadas.length} matrícula(s):\n${lista}\n\nSin registro en Servicios Escolares: ${d.sin_registro}`
+        : `No se encontró ninguna ficha con matrícula ya registrada.\nSin registro en Servicios Escolares: ${d.sin_registro}`);
+      cargar();
+    } catch (err) {
+      alert(err.message);
+      b.disabled = false;
+      b.textContent = 'Vincular matrículas ya registradas';
+    }
   }
 
   function construirParams() {
@@ -210,6 +260,15 @@
       const pendientes = fichas.filter(f => !f.revisado).length;
       const sinMatricula = fichas.filter(f => !f.matricula_asignada).length;
       contador.textContent = `${fichas.length} ficha${fichas.length === 1 ? '' : 's'} · ${pendientes} pendiente${pendientes === 1 ? '' : 's'} de revisar · ${sinMatricula} sin matrícula`;
+      if (sinMatricula) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn-mini btn-vincular';
+        b.textContent = 'Vincular matrículas ya registradas';
+        b.title = 'Busca por CURP en Servicios Escolares a quienes ya tienen matrícula asignada a mano y la anota en su ficha';
+        b.addEventListener('click', vincularExistentes);
+        contador.append(' ', b);
+      }
     }
     if (!fichas.length) {
       tbody.innerHTML = '<tr><td colspan="12"><p class="fichas-vacio">Sin resultados con esos filtros.</p></td></tr>';
