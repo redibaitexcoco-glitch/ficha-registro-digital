@@ -44,14 +44,14 @@ app.use('/api/fichas', documentos);
 app.use('/api/fichas', proteger, registroAdmin);
 
 // Panel administrativo (HTML) protegido
-app.use('/admin', proteger, express.static(path.join(__dirname, '..', 'public', 'admin'), { index: 'index.html' }));
+app.use('/admin', proteger, express.static(path.join(__dirname, '..', 'public', 'admin'), { index: 'index.html', setHeaders: (res, ruta) => { if (/\.(html|js|css)$/.test(ruta)) res.setHeader('Cache-Control', 'no-cache'); } }));
 
 // Módulo de captura para personal autorizado (HTML) protegido — URL que NO se comparte
 // públicamente; el estudiante solo conoce y usa el formulario en la raíz del sitio.
-app.use('/personal', proteger, express.static(path.join(__dirname, '..', 'public', 'personal'), { index: 'index.html' }));
+app.use('/personal', proteger, express.static(path.join(__dirname, '..', 'public', 'personal'), { index: 'index.html', setHeaders: (res, ruta) => { if (/\.(html|js|css)$/.test(ruta)) res.setHeader('Cache-Control', 'no-cache'); } }));
 
 // Formulario público del estudiante
-app.use(express.static(path.join(__dirname, '..', 'public'), { index: 'index.html' }));
+app.use(express.static(path.join(__dirname, '..', 'public'), { index: 'index.html', setHeaders: (res, ruta) => { if (/\.(html|js|css)$/.test(ruta)) res.setHeader('Cache-Control', 'no-cache'); } }));
 
 app.get('/healthz', (req, res) => res.json({ ok: true }));
 
