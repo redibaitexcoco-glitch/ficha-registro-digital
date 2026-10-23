@@ -50,6 +50,9 @@ app.use('/admin', proteger, express.static(path.join(__dirname, '..', 'public', 
 // públicamente; el estudiante solo conoce y usa el formulario en la raíz del sitio.
 app.use('/personal', proteger, express.static(path.join(__dirname, '..', 'public', 'personal'), { index: 'index.html', setHeaders: (res, ruta) => { if (/\.(html|js|css)$/.test(ruta)) res.setHeader('Cache-Control', 'no-cache'); } }));
 
+// Enlaces antiguos al formulario de titulación: ahora el trámite se inicia en el Expediente
+app.get('/tramites/grado.html', (req, res) => res.redirect('/tramites/'));
+
 // Formulario público del estudiante
 app.use(express.static(path.join(__dirname, '..', 'public'), { index: 'index.html', setHeaders: (res, ruta) => { if (/\.(html|js|css)$/.test(ruta)) res.setHeader('Cache-Control', 'no-cache'); } }));
 

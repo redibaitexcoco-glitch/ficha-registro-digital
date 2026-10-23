@@ -27,6 +27,10 @@ async function subirDocumentoDrive({ archivo, carpetaId, curp, tipo, clave, vers
 
 // POST /api/tramites — crea el trámite con todos sus documentos (multipart)
 router.post('/', recibirArchivos, async (req, res) => {
+  // Los trámites nuevos de titulación y grado se inician desde el Expediente Electrónico
+  // (ruta /api/integracion). Aquí solo siguen el seguimiento y el reenvío por folio.
+  return res.status(410).json({ error: 'La titulación y la obtención de grado se inician desde tu Expediente Electrónico, en la sección Titulación.' });
+  // eslint-disable-next-line no-unreachable
   const b = req.body || {};
   const cfg = TIPOS[b.tipo];
   if (!cfg) return res.status(400).json({ error: 'El tipo de trámite no es válido.' });

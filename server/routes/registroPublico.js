@@ -20,8 +20,8 @@ const TRAMITES_VALIDOS = [
   'Baja definitiva',
   'Baja temporal',
 ];
-// Titulación Licenciatura, Grado Maestría y Grado Doctorado se registran en
-// su propio asistente (/tramites/grado.html), no en esta ficha.
+// La titulación y la obtención de grado se inician desde el Expediente Electrónico
+// del estudiante (Servicios Escolares), no desde esta ficha.
 
 const PROGRAMAS_VALIDOS = [
   'Maestría en Educación (No escolarizado)',
