@@ -84,7 +84,10 @@
         <div><small>Contacto</small><b>${esc(t.tel_celular || '')} · ${esc(t.correo_electronico || '')}</b></div>
         ${t.titulo_trabajo ? `<div class="tr-ancho"><small>Título del trabajo</small><b>${esc(t.titulo_trabajo)}</b></div>` : ''}
       </div>
-      <div class="tr-estado-general">${chip(ESTADO_TRAMITE[t.estado] || [t.estado, 'tr-gris'])}</div>
+      <div class="tr-estado-general">${chip(ESTADO_TRAMITE[t.estado] || [t.estado, 'tr-gris'])}
+        ${t.drive_folder_id
+          ? `<a class="btn-mini tr-ver tr-carpeta" href="https://drive.google.com/drive/folders/${encodeURIComponent(t.drive_folder_id)}" target="_blank" rel="noopener">Ver carpeta en Drive</a>`
+          : '<span class="tr-vacio tr-carpeta">La carpeta en Drive se crea cuando el estudiante sube su primer documento.</span>'}</div>
       <h3>Documentos del estudiante</h3>
       ${est.map((d) => `
         <div class="tr-doc ${d.estado === 'no_cumple' ? 'mal' : ''}" data-doc="${d.id}">

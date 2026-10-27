@@ -140,3 +140,6 @@ body.admin-tablero { background: #e3e9ef; color: #0b1520; margin: 0; }
 .admin-tablero .btn-mini.btn-vincular { background: #ffffff; color: #1F3A5F; border: 1px solid #1F3A5F; border-radius: 9px; padding: 5px 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; margin-left: 6px; }
 .admin-tablero .btn-mini.btn-vincular:disabled { opacity: .6; cursor: wait; }
 .vp-resultado .vp-sub { display: block; font-size: 0.8rem; color: #4a5866; margin-top: 4px; }
+.tr-estado-general { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tr-estado-general .tr-carpeta { margin-left: auto; }
+.tr-estado-general span.tr-carpeta { font-size: 0.8rem; }
