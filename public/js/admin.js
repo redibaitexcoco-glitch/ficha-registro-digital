@@ -75,6 +75,7 @@
         </div>
         <div class="vp-resultado" id="vpResultado"><small>Matrícula que se asignará</small><b>Calculando…</b></div>
         <div id="vpAvisos"></div>
+        <div id="vpCoincidencias"></div>
         <p class="vp-nota">Al confirmar, se crea al estudiante en Servicios Escolares con contraseña inicial igual a su CURP. Si otra persona asigna una matrícula del mismo programa y periodo en este momento, el consecutivo puede avanzar uno; el mensaje final mostrará la matrícula real.</p>
         <p class="vp-error" id="vpError" role="alert"></p>
         <div class="modal-acciones">
@@ -90,6 +91,7 @@
     let consulta = 0;
     let enviando = false;
     let existente = null; // matrícula ya registrada en SE para esta CURP
+    let provisionalElegido = null; // id del registro provisional que se completará (null = matrícula nueva)
 
     const cerrar = () => { if (enviando) return; fondo.remove(); document.removeEventListener('keydown', teclas); };
     const teclas = (e) => { if (e.key === 'Escape') cerrar(); };
@@ -100,7 +102,9 @@
       const n = ++consulta;
       btnConfirmar.disabled = true;
       existente = null;
+      provisionalElegido = null;
       btnConfirmar.textContent = 'Confirmar y asignar';
+      $('#vpCoincidencias').innerHTML = '';
       $('#vpError').textContent = '';
       $('#vpResultado').className = 'vp-resultado';
       $('#vpResultado').innerHTML = '<small>Matrícula que se asignará</small><b>Calculando…</b>';
@@ -130,6 +134,27 @@
         }
         $('#vpResultado').innerHTML = `<small>Matrícula que se asignará</small><b>${textoSeguro(d.matricula)}</b>`;
         btnConfirmar.disabled = false;
+        // Registros provisionales (alta solo con nombre) que podrían ser esta misma persona
+        const co = d.coincidencias || [];
+        if (co.length) {
+          const una = co.length === 1;
+          $('#vpCoincidencias').innerHTML = `<div class="vp-coincide"><small>${una ? 'COINCIDE CON UN REGISTRO PROVISIONAL (SIN CURP)' : `${co.length} REGISTROS PROVISIONALES PARECIDOS · ELIGE EL CORRECTO`}</small>
+            ${co.map((c) => `<label class="vp-op"><input type="radio" name="vpProv" value="${c.id}" ${una ? 'checked' : ''}><span><b>${textoSeguro(c.nombre)} · ${textoSeguro(c.matricula)}</b>
+              <small>${[c.ingreso ? 'ingreso ' + c.ingreso : '', c.plantel ? 'procede de ' + c.plantel : '', c.registrado ? 'registrado el ' + c.registrado.split('-').reverse().join('/') : ''].filter(Boolean).map(textoSeguro).join(' · ')}</small></span></label>`).join('')}
+            <label class="vp-op"><input type="radio" name="vpProv" value="nueva"><span><b>${una ? 'No es esta persona' : 'No es ninguna'}</b><small>Asignar una matrícula nueva (${textoSeguro(d.matricula)})</small></span></label></div>`;
+          const elegir = () => {
+            const r = $('#vpCoincidencias').querySelector('input[name="vpProv"]:checked');
+            provisionalElegido = r && r.value !== 'nueva' ? Number(r.value) : null;
+            btnConfirmar.disabled = !r;
+            btnConfirmar.textContent = provisionalElegido ? 'Completar registro provisional' : 'Confirmar y asignar';
+            const elegido = co.find((c) => c.id === provisionalElegido);
+            $('#vpResultado').innerHTML = elegido
+              ? `<small>Se conserva la matrícula del registro provisional</small><b>${textoSeguro(elegido.matricula)}</b><span class="vp-sub">Se agregan la CURP, correo y teléfono de la ficha; su contraseña inicial será su CURP.</span>`
+              : `<small>Matrícula que se asignará</small><b>${textoSeguro(d.matricula)}</b>`;
+          };
+          $('#vpCoincidencias').querySelectorAll('input').forEach((i) => i.addEventListener('change', elegir));
+          elegir();
+        }
       } catch (err) {
         if (n !== consulta) return;
         $('#vpResultado').innerHTML = '<small>Matrícula que se asignará</small><b>—</b>';
@@ -141,6 +166,27 @@
     selPeriodo.addEventListener('change', actualizar);
 
     btnConfirmar.addEventListener('click', async () => {
+      if (provisionalElegido) {
+        enviando = true;
+        btnConfirmar.disabled = true;
+        btnConfirmar.textContent = 'Completando…';
+        try {
+          const resp = await fetch(`/api/matricular/${id}/completar-provisional`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ estudiante_id: provisionalElegido }) });
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok) throw new Error(data.error || 'No se pudo completar el registro provisional');
+          enviando = false;
+          cerrar();
+          alert(`Registro provisional completado.\nMatrícula: ${data.matricula}`);
+          cargar();
+        } catch (err) {
+          enviando = false;
+          $('#vpError').textContent = err.message;
+          btnConfirmar.textContent = 'Completar registro provisional';
+          btnConfirmar.disabled = false;
+        }
+        return;
+      }
       if (existente) {
         enviando = true;
         btnConfirmar.disabled = true;
@@ -188,6 +234,34 @@
     selPeriodo.focus();
   }
 
+  // Coincidencias por nombre con registros provisionales: se confirman una por una
+  function mostrarCoincidenciasPorNombre(lista) {
+    const fondo = document.createElement('div');
+    fondo.className = 'modal-overlay';
+    fondo.innerHTML = `<div class="modal-caja vp-caja" role="dialog" aria-modal="true" aria-labelledby="cnTitulo">
+      <div class="modal-header"><h2 id="cnTitulo">Coincidencias por nombre</h2><button type="button" class="btn-cerrar-modal" data-cerrar aria-label="Cerrar">&times;</button></div>
+      <p class="vp-nota">Estas fichas no tienen CURP registrada en Servicios Escolares, pero su nombre se parece a un registro provisional (alta solo con nombre). Confírmalas una por una; al completar, el registro conserva su matrícula y recibe la CURP de la ficha.</p>
+      ${lista.map((f) => f.candidatos.map((c) => `<div class="vp-op cn-fila"><span><b>Ficha: ${textoSeguro(f.nombre)}</b><small>↔ registro provisional ${textoSeguro(c.matricula)} · ${textoSeguro(c.nombre)}${c.plantel ? ' · ' + textoSeguro(c.plantel) : ''}</small></span>
+        <button type="button" class="btn-mini btn-principal" data-ficha="${f.ficha_id}" data-est="${c.id}">Completar</button></div>`).join('')).join('')}
+      <div class="modal-acciones"><button type="button" class="btn-secundario" data-cerrar>Cerrar</button></div></div>`;
+    document.body.appendChild(fondo);
+    const cerrar = () => { fondo.remove(); cargar(); };
+    fondo.addEventListener('click', async (e) => {
+      if (e.target === fondo || e.target.closest('[data-cerrar]')) return cerrar();
+      const b = e.target.closest('button[data-est]');
+      if (!b) return;
+      b.disabled = true; b.textContent = 'Completando…';
+      try {
+        const r = await fetch(`/api/matricular/${b.dataset.ficha}/completar-provisional`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ estudiante_id: Number(b.dataset.est) }) });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.error || 'No se pudo completar');
+        b.textContent = `Completado · ${d.matricula}`;
+        fondo.querySelectorAll(`button[data-ficha="${b.dataset.ficha}"]:not([disabled])`).forEach((x) => { x.disabled = true; x.textContent = 'Ya vinculada'; });
+      } catch (err) { alert(err.message); b.disabled = false; b.textContent = 'Completar'; }
+    });
+  }
+
   async function vincularExistentes(e) {
     const b = e.currentTarget;
     if (!confirm('Se buscará por CURP en Servicios Escolares a cada ficha sin matrícula. Si el estudiante ya existe, su matrícula se anotará en la ficha (no se crea ni se modifica ningún estudiante). ¿Continuar?')) return;
@@ -201,6 +275,7 @@
       alert(d.vinculadas.length
         ? `Se vincularon ${d.vinculadas.length} matrícula(s):\n${lista}\n\nSin registro en Servicios Escolares: ${d.sin_registro}`
         : `No se encontró ninguna ficha con matrícula ya registrada.\nSin registro en Servicios Escolares: ${d.sin_registro}`);
+      if (d.por_nombre && d.por_nombre.length) mostrarCoincidenciasPorNombre(d.por_nombre);
       cargar();
     } catch (err) {
       alert(err.message);
