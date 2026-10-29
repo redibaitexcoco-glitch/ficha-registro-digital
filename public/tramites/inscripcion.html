@@ -32,6 +32,7 @@
   </nav>
 
   <form id="formFicha" class="panel" novalidate>
+    <input type="hidden" name="tramite" value="Inscripción">
     <input type="hidden" name="capturado_por" value="estudiante">
 
     <div id="zonaFormulario" style="display:contents">
@@ -270,6 +271,14 @@
           <span>Acepto y me comprometo a cumplir las normas de control escolar y los reglamentos institucionales. *</span>
         </label>
         <p class="error-campo" id="errorConformidad" hidden>Debes aceptar la conformidad para poder enviar la ficha.</p>
+        <div class="aviso-privacidad-wizard">
+          <p><b>Aviso de privacidad y uso de la información.</b> Los datos personales y documentos recabados en esta ficha serán tratados conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, y se utilizarán únicamente para la integración del expediente académico, trámites de control escolar y, en su caso, titulación o grado ante Red IBAI Texcoco. No se transferirán a terceros sin tu consentimiento, salvo los casos previstos por la ley o requeridos por autoridades educativas. Puedes ejercer tus derechos ARCO escribiendo a <a href="mailto:serviciosescolares@redibaiconnect.org">serviciosescolares@redibaiconnect.org</a>.</p>
+          <label class="casilla">
+            <input type="checkbox" id="acepto_aviso_privacidad" name="acepto_aviso_privacidad" required>
+            <span>He leído y acepto el aviso de privacidad y el uso de la información que se recaba. *</span>
+          </label>
+          <p class="error-campo" id="errorAvisoPrivacidad" hidden>Debes aceptar el aviso de privacidad para poder enviar la ficha.</p>
+        </div>
         <p class="fecha-firma" id="fechaFirmaTexto"></p>
       </section>
 

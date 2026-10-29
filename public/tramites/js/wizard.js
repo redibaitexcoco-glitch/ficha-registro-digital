@@ -510,6 +510,14 @@
       return;
     }
     errorConformidad.hidden = true;
+    const aviso = document.getElementById('acepto_aviso_privacidad');
+    const errorAviso = document.getElementById('errorAvisoPrivacidad');
+    if (aviso && !aviso.checked) {
+      errorAviso.hidden = false;
+      aviso.focus();
+      return;
+    }
+    if (errorAviso) errorAviso.hidden = true;
 
     btnEnviar.disabled = true;
     btnEnviar.textContent = 'Enviando...';
@@ -522,6 +530,8 @@
           datos[nombre] = valor;
         }
         datos.acepto_conformidad = acepto.checked;
+        datos.acepto_aviso_privacidad = aviso ? aviso.checked : false;
+        datos.tramite = datos.tramite || 'Inscripción';
         datos.fecha_firma = new Date().toISOString().slice(0, 10);
 
         const resp = await fetch('/api/fichas', {
