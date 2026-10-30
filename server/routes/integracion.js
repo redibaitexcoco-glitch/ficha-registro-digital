@@ -166,4 +166,71 @@ router.post('/tramites/:id(\\d+)/documentos/:clave', recibirArchivos, async (req
   }
 });
 
+// ===== Documentos de inscripción (Expediente Electrónico de Servicios Escolares) =====
+// Servicios Escolares lleva el control de qué documentos faltan y su revisión; aquí solo
+// se guardan los archivos en la carpeta de Drive del estudiante (la misma de su ficha).
+
+// GET /api/integracion/ficha-documentos?curp=&matricula= — documentos que el estudiante ya
+// entregó con su ficha de registro (la más reciente que coincida por CURP o matrícula).
+router.get('/ficha-documentos', async (req, res) => {
+  const curp = curpLimpia(req.query.curp);
+  const matricula = (limpiar(req.query.matricula) || '').toUpperCase();
+  if (!curp && !matricula) return res.status(400).json({ error: 'Falta la CURP o la matrícula.' });
+  try {
+    const { rows } = await pool.query(
+      `SELECT drive_folder_id, doc_acta_nacimiento_id, doc_curp_id, doc_ine_id, doc_certificado_id, doc_titulo_id, doc_cedula_id, doc_fotografia_id
+       FROM fichas_registro WHERE ($1 <> '' AND upper(curp) = $1) OR ($2 <> '' AND upper(matricula_asignada) = $2)
+       ORDER BY (drive_folder_id IS NOT NULL) DESC, created_at DESC LIMIT 1`, [curp, matricula]);
+    const f = rows[0];
+    if (!f) return res.json({ ficha: null });
+    res.json({ ficha: { carpeta_id: f.drive_folder_id, documentos: {
+      acta: f.doc_acta_nacimiento_id, curp: f.doc_curp_id, ine: f.doc_ine_id, certificado: f.doc_certificado_id,
+      titulo: f.doc_titulo_id, cedula: f.doc_cedula_id, foto: f.doc_fotografia_id } } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'No se pudo consultar la ficha.' });
+  }
+});
+
+// POST /api/integracion/archivos — guarda un archivo en la carpeta de Drive del estudiante.
+// Campos: archivo, nombre_archivo, carpeta_id (opcional), curp, matricula, primer_apellido, segundo_apellido, nombres
+const TIPOS_ARCHIVO = { 'application/pdf': 'pdf', 'image/jpeg': 'jpg', 'image/png': 'png' };
+function tipoReal(archivo) {
+  const b = archivo && archivo.buffer;
+  if (!b || b.length < 8) return null;
+  if (b.slice(0, 5).toString('latin1').startsWith('%PDF')) return 'application/pdf';
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'image/jpeg';
+  if (b.slice(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return 'image/png';
+  return null;
+}
+router.post('/archivos', recibirArchivos, async (req, res) => {
+  const archivo = (req.files || [])[0];
+  if (!archivo) return res.status(400).json({ error: 'No se recibió el archivo.' });
+  const tipo = tipoReal(archivo);
+  if (!tipo) return res.status(400).json({ error: 'El archivo debe ser PDF, JPG o PNG.' });
+  const b = req.body || {};
+  try {
+    let carpetaId = limpiar(b.carpeta_id);
+    if (!carpetaId) {
+      const curp = curpLimpia(b.curp);
+      if (curp) {
+        const { rows } = await pool.query('SELECT drive_folder_id FROM fichas_registro WHERE upper(curp) = $1 AND drive_folder_id IS NOT NULL ORDER BY created_at DESC LIMIT 1', [curp]);
+        if (rows[0]) carpetaId = rows[0].drive_folder_id;
+      }
+    }
+    if (!carpetaId) {
+      carpetaId = await obtenerOCrearCarpetaEstudiante({
+        curp: curpLimpia(b.curp) || (limpiar(b.matricula) || '').toUpperCase(),
+        primerApellido: aMayusculasSinAcentos(b.primer_apellido), segundoApellido: aMayusculasSinAcentos(b.segundo_apellido), nombres: aMayusculasSinAcentos(b.nombres),
+      });
+    }
+    const base = nombreSeguro(limpiar(b.nombre_archivo) || 'Documento').replace(/\s+/g, '_') || 'Documento';
+    const subido = await subirArchivo({ buffer: archivo.buffer, nombreArchivo: `${base}.${TIPOS_ARCHIVO[tipo]}`, mimeType: tipo, carpetaId });
+    res.status(201).json({ file_id: subido.fileId, carpeta_id: carpetaId, nombre_archivo: `${base}.${TIPOS_ARCHIVO[tipo]}`, tipo });
+  } catch (err) {
+    console.error('Error al guardar archivo desde Servicios Escolares:', err.message);
+    res.status(503).json({ error: 'No se pudo guardar el documento en este momento. Intenta de nuevo en unos minutos.' });
+  }
+});
+
 module.exports = router;
