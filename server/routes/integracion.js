@@ -178,12 +178,17 @@ router.get('/ficha-documentos', async (req, res) => {
   if (!curp && !matricula) return res.status(400).json({ error: 'Falta la CURP o la matrícula.' });
   try {
     const { rows } = await pool.query(
-      `SELECT drive_folder_id, doc_acta_nacimiento_id, doc_curp_id, doc_ine_id, doc_certificado_id, doc_titulo_id, doc_cedula_id, doc_fotografia_id
+      `SELECT drive_folder_id, matricula_asignada, programa_educativo, doc_acta_nacimiento_id, doc_curp_id, doc_ine_id, doc_certificado_id, doc_titulo_id, doc_cedula_id, doc_fotografia_id
        FROM fichas_registro WHERE ($1 <> '' AND upper(curp) = $1) OR ($2 <> '' AND upper(matricula_asignada) = $2)
-       ORDER BY (drive_folder_id IS NOT NULL) DESC, created_at DESC LIMIT 1`, [curp, matricula]);
+       ORDER BY ($2 <> '' AND upper(matricula_asignada) = $2) DESC, (drive_folder_id IS NOT NULL) DESC, created_at DESC LIMIT 1`, [curp, matricula]);
     const f = rows[0];
     if (!f) return res.json({ ficha: null });
-    res.json({ ficha: { carpeta_id: f.drive_folder_id, documentos: {
+    // ¿La ficha es del mismo programa? (un estudiante puede tener ficha de Maestría y de Doctorado)
+    const pref = matricula.slice(0, 3);
+    const programa = String(f.programa_educativo || '').toUpperCase();
+    const mismo_programa = (matricula && String(f.matricula_asignada || '').toUpperCase() === matricula)
+      || (pref === 'MED' && programa.includes('MAESTR')) || (pref === 'DED' && programa.includes('DOCTOR')) || (pref === 'LPE' && programa.includes('LICENCIA'));
+    res.json({ ficha: { carpeta_id: f.drive_folder_id, mismo_programa, documentos: {
       acta: f.doc_acta_nacimiento_id, curp: f.doc_curp_id, ine: f.doc_ine_id, certificado: f.doc_certificado_id,
       titulo: f.doc_titulo_id, cedula: f.doc_cedula_id, foto: f.doc_fotografia_id } } });
   } catch (err) {

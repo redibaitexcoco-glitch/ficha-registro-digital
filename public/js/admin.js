@@ -134,6 +134,11 @@
         }
         $('#vpResultado').innerHTML = `<small>Matrícula que se asignará</small><b>${textoSeguro(d.matricula)}</b>`;
         btnConfirmar.disabled = false;
+        // Ya es estudiante de otro programa (p. ej. Maestría): se crea su registro de este programa
+        if ((d.otros_programas || []).length) {
+          $('#vpAvisos').innerHTML += `<p class="vp-aviso"><b>Esta CURP ya está inscrita en ${d.otros_programas.map((o) => `${textoSeguro(o.programa)} (${textoSeguro(o.matricula)})`).join(' y ')}.</b>
+            Se creará su registro de este programa con una matrícula nueva. Ambos quedan vinculados por la CURP: entrará a su Expediente con la misma contraseña y elegirá el programa.</p>`;
+        }
         // Registros provisionales (alta solo con nombre) que podrían ser esta misma persona
         const co = d.coincidencias || [];
         if (co.length) {
