@@ -37,6 +37,7 @@
       .vp-aviso { margin: 0 0 10px; padding: 10px 12px; border-radius: 8px; background: #fdf0dc; color: #7a4a06; font-size: 0.88rem; font-weight: 600; }
       .vp-nota { margin: 0 0 12px; font-size: 0.82rem; color: #4a5560; }
       .vp-error { color: #a0242f; font-weight: 600; font-size: 0.9rem; min-height: 1em; margin: 0 0 8px; }
+      .vp-aviso-anterior { background: #fdf3e1 !important; border-left: 4px solid #a0610a !important; color: #5c3b06 !important; }
       #vpConfirmar { background: #1F3A5F; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font: inherit; font-weight: 700; cursor: pointer; }
       #vpConfirmar:hover:not(:disabled) { background: #142a46; }
       #vpConfirmar:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -120,6 +121,12 @@
           <span>Plantel</span><span>${textoSeguro(d.plantel || '—')}</span>`;
         $('#vpAvisos').innerHTML = d.pago_externo
           ? `<p class="vp-aviso">${textoSeguro(d.plantel_pago_externo || d.plantel)} cobra a sus propios estudiantes: quedará marcado con pago externo y no se le generarán adeudos en Texcoco.</p>` : '';
+        // Periodo anterior al actual: aviso para evitar asignar una generación equivocada por descuido
+        const elegido = Number(selAnio.value) * 10 + Number(selPeriodo.value);
+        if (elegido < anioActual * 10 + Number(periodoActual)) {
+          $('#vpAvisos').innerHTML += `<p class="vp-aviso vp-aviso-anterior"><b>⚠ Estás asignando una matrícula del periodo ${selAnio.value}-${selPeriodo.value}, anterior al actual (${anioActual}-${periodoActual}).</b>
+            Verifica que corresponde a su ingreso real: este periodo define su generación, su ingreso en el alta DGAIR y la fecha límite de sus documentos profesionales.</p>`;
+        }
         if (d.bloqueo) {
           $('#vpResultado').className = 'vp-resultado bloqueado';
           if (d.existente) {
