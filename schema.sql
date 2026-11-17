@@ -151,3 +151,10 @@ CREATE TABLE IF NOT EXISTS tramite_documentos (
 DELETE FROM tramite_documentos WHERE clave = 'ine' AND interno = false AND estado = 'sin_cargar';
 -- El certificado de terminación ya no aparece entre los documentos que gestiona Servicios Escolares.
 DELETE FROM tramite_documentos WHERE clave = 'cert_terminacion' AND interno = true AND estado = 'pendiente';
+
+-- Cambio de nombre del plantel: "Red IBAI Tapachula" → "Red IBAI Tapachula Posgrados" (fichas y trámites ya capturados).
+-- Compara sin acentos ni mayúsculas; no toca "Red IBAI Tapachula Ciencias de la Educación".
+UPDATE fichas_registro SET plantel = 'Red IBAI Tapachula Posgrados'
+ WHERE trim(regexp_replace(lower(translate(plantel, 'áéíóúüÁÉÍÓÚÜ', 'aeiouuAEIOUU')), '\s+', ' ', 'g')) = 'red ibai tapachula';
+UPDATE tramites SET plantel = 'Red IBAI Tapachula Posgrados'
+ WHERE trim(regexp_replace(lower(translate(plantel, 'áéíóúüÁÉÍÓÚÜ', 'aeiouuAEIOUU')), '\s+', ' ', 'g')) = 'red ibai tapachula';

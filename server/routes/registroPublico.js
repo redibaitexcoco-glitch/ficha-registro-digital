@@ -32,7 +32,7 @@ const PLANTELES_VALIDOS = [
   'Red IBAI Texcoco',
   'Módulo Ecatepec',
   'Módulo San Felipe del Progreso',
-  'Red IBAI Tapachula',
+  'Red IBAI Tapachula Posgrados',
   'Red IBAI Cacahoatán',
   'Red IBAI Comitán',
   'Red IBAI Mazatán',
